@@ -26,22 +26,22 @@ io.on("connection", (socket) => {
   socket.emit("users", users);
 
   // notificar usuarios recogidos
-  socket.broadcast.emit("Usuario Conectado", {
+  socket.broadcast.emit("user connected", {
     userID: socket.id,
     username: socket.username,
   });
 
   // Enviar mensaje a receptor adecuado
-  socket.on("Mensaje Privado", ({ content, to }) => {
-    socket.to(to).emit("Mensaje Privado", {
+  socket.on("private message", ({ content, to }) => {
+    socket.to(to).emit("private message", {
       content,
       from: socket.id,
     });
   });
 
   // Notificar a los usuarios de desconexion
-  socket.on("Desconectar", () => {
-    socket.broadcast.emit("Usuario Desconectado", socket.id);
+  socket.on("disconnect", () => {
+    socket.broadcast.emit("user disconnected", socket.id);
   });
 });
 
