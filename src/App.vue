@@ -12,6 +12,7 @@
 import SelectUsername from "./components/SelectUsername";
 import Chat from "./components/Chat";
 import socket from "./socket";
+
 export default {
   name: "App",
   components: {
@@ -32,19 +33,22 @@ export default {
   },
   created() {
     const sessionID = localStorage.getItem("sessionID");
+
     if (sessionID) {
       this.usernameAlreadySelected = true;
       socket.auth = { sessionID };
       socket.connect();
     }
+
     socket.on("session", ({ sessionID, userID }) => {
-      // attach the session ID to the next reconnection attempts
+      // incorporar el ID de sesion a los siguientes intentos de reconexion
       socket.auth = { sessionID };
-      // store it in the localStorage
+      // Almacenar en localStorage
       localStorage.setItem("sessionID", sessionID);
-      // save the ID of the user
+      // Guardar el ID del usuario
       socket.userID = userID;
     });
+
     socket.on("connect_error", (err) => {
       if (err.message === "invalid username") {
         this.usernameAlreadySelected = false;
@@ -61,10 +65,12 @@ export default {
 body {
   margin: 0;
 }
+
 @font-face {
   font-family: Lato;
   src: url("/fonts/Lato-Regular.ttf");
 }
+
 #app {
   font-family: Lato, Arial, sans-serif;
   font-size: 14px;
