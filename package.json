@@ -2,7 +2,7 @@
   "name": "chat-TFG",
   "version": "1.0.0",
   "private": true,
-  "description": "Aplicacion de mensajeria instantanea, para el Trabajo de Fin de Grado en la ESEI",
+  "description": "Aplicación de mensajería instantánea, para el Trabajo de Fin de Grado en la ESEI",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,7 +16,8 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "express": "^4.17.1",
-    "socket.io": "^4.1.3",
+    "socket.io": "^4.2.0",
+    "socket.io-client": "^4.2.0",
     "vue": "^2.6.14"
   },
   "devDependencies": {
