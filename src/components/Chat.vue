@@ -22,6 +22,7 @@
 import socket from "../socket";
 import User from "./User";
 import MessagePanel from "./MessagePanel";
+
 export default {
   name: "Chat",
   components: { User, MessagePanel },
@@ -57,6 +58,7 @@ export default {
         }
       });
     });
+
     socket.on("disconnect", () => {
       this.users.forEach((user) => {
         if (user.self) {
@@ -64,17 +66,26 @@ export default {
         }
       });
     });
+
     const initReactiveProperties = (user) => {
-      user.connected = true;
       user.messages = [];
       user.hasNewMessages = false;
     };
+
     socket.on("users", (users) => {
       users.forEach((user) => {
-        user.self = user.userID === socket.id;
+        for (let i = 0; i < this.users.length; i++) {
+          const existingUser = this.users[i];
+          if (existingUser.userID === user.userID) {
+            existingUser.connected = user.connected;
+            return;
+          }
+        }
+        user.self = user.userID === socket.userID;
         initReactiveProperties(user);
+        this.users.push(user);
       });
-      // put the current user first, and sort by username
+      // El usuario actual va primero, los demás se ordenan por orden alfabético
       this.users = users.sort((a, b) => {
         if (a.self) return -1;
         if (b.self) return 1;
@@ -82,10 +93,19 @@ export default {
         return a.username > b.username ? 1 : 0;
       });
     });
+
     socket.on("user connected", (user) => {
+      for (let i = 0; i < this.users.length; i++) {
+        const existingUser = this.users[i];
+        if (existingUser.userID === user.userID) {
+          existingUser.connected = true;
+          return;
+        }
+      }
       initReactiveProperties(user);
       this.users.push(user);
     });
+
     socket.on("user disconnected", (id) => {
       for (let i = 0; i < this.users.length; i++) {
         const user = this.users[i];
@@ -95,13 +115,15 @@ export default {
         }
       }
     });
-    socket.on("private message", ({ content, from }) => {
+
+    socket.on("private message", ({ content, from, to }) => {
       for (let i = 0; i < this.users.length; i++) {
         const user = this.users[i];
-        if (user.userID === from) {
+        const fromSelf = socket.userID === from;
+        if (user.userID === (fromSelf ? to : from)) {
           user.messages.push({
             content,
-            fromSelf: false,
+            fromSelf,
           });
           if (user !== this.selectedUser) {
             user.hasNewMessages = true;
