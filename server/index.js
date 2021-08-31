@@ -1,24 +1,52 @@
-const express = require('express');
-const app = express();
-const httpServer = require('http').createServer(app);
-const io = require("socket.io")(httpServer , {
+const httpServer = require("http").createServer();
+const io = require("socket.io")(httpServer, {
   cors: {
     origin: "http://localhost:8080",
   },
 });
-const io = new Server(httpServer);
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+io.use((socket, next) => {
+  const username = socket.handshake.auth.username;
+  if (!username) {
+    return next(new Error("Nombre no válido"));
+  }
+  socket.username = username;
+  next();
 });
 
-io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
-    io.emit('chat message', msg);
+io.on("connection", (socket) => {
+  // recoger usuarios existentes
+  const users = [];
+  for (let [id, socket] of io.of("/").sockets) {
+    users.push({
+      userID: id,
+      username: socket.username,
+    });
+  }
+  socket.emit("users", users);
+
+  // notificar usuarios recogidos
+  socket.broadcast.emit("Usuario Conectado", {
+    userID: socket.id,
+    username: socket.username,
+  });
+
+  // Enviar mensaje a receptor adecuado
+  socket.on("Mensaje Privado", ({ content, to }) => {
+    socket.to(to).emit("Mensaje Privado", {
+      content,
+      from: socket.id,
+    });
+  });
+
+  // Notificar a los usuarios de desconexion
+  socket.on("Desconectar", () => {
+    socket.broadcast.emit("Usuario Desconectado", socket.id);
   });
 });
 
-httpServer.listen(3000, () => {
-  console.log('listening on *:3000');
-});
+const PORT = process.env.PORT || 3000;
+
+httpServer.listen(PORT, () =>
+  console.log(`Servidor escuchando en http://localhost:${PORT}`)
+);
