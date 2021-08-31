@@ -11,7 +11,7 @@
         class="message"
       >
         <div v-if="displaySender(message, index)" class="sender">
-          {{ message.fromSelf ? "(yourself)" : user.username }}
+          {{ message.fromSelf ? "(Tú)" : user.username }}
         </div>
         {{ message.content }}
       </li>

@@ -2,7 +2,7 @@
   <div class="user" @click="onClick" :class="{ selected: selected }">
     <div class="description">
       <div class="name">
-        {{ user.username }} {{ user.self ? " (yourself)" : "" }}
+        {{ user.username }} {{ user.self ? " (Tú)" : "" }}
       </div>
       <div class="status">
         <status-icon :connected="user.connected" />{{ status }}
