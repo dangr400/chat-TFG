@@ -1,9 +1,41 @@
 const httpServer = require("http").createServer();
-const io = require("socket.io")(httpServer, {
+const { Server } = require("socket.io")
+const { createAdapter } = require("@socket.io/mongo-adapter");
+const { MongoClient } = require("mongodb");
+
+const DB = "TFG";
+const ADAPTER = "socket.io-adapter-events";
+const MENSAJES = "Mensajes"
+const USUARIOS = "Usuarios"
+
+const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:8080",
   },
 });
+
+const mongoClient = new MongoClient("mongodb://localhost:27017/?replicaSet=rs0", {
+  useUnifiedTopology: true,
+});
+
+const main = async () => {
+  await mongoClient.connect();
+
+  try {
+    await mongoClient.db(DB).createCollection(ADAPTER, {
+      capped: true,
+      size: 1e6
+    });
+  } catch (e) {
+    // collection already exists
+  }
+  const mongoCollection = mongoClient.db(DB).collection(ADAPTER);
+
+  io.adapter(createAdapter(mongoCollection));
+  io.listen(3000);
+}
+// Conexion con mongo
+main();
 
 // ID aleatorio para cada usuario del chat
 const crypto = require("crypto");
@@ -13,14 +45,15 @@ const randomId = () => crypto.randomBytes(8).toString("hex");
 const { InMemorySessionStore } = require("./sessionStore");
 const sessionStore = new InMemorySessionStore();
 
+// Objeto messageStore, para almacenar los mensajes del servidor
 const { InMemoryMessageStore } = require("./messageStore");
 const messageStore = new InMemoryMessageStore();
 
 io.use((socket, next) => {
   const sessionID = socket.handshake.auth.sessionID;
-  // Si ya existe una sesion, recuperarla
   if (sessionID) {
     const session = sessionStore.findSession(sessionID);
+    // Si ya existe una sesion, recuperarla
     if (session) {
       socket.sessionID = sessionID;
       socket.userID = session.userID;
