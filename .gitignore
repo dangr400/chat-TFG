@@ -3,3 +3,4 @@ node_modules
 # Editor files
 .vscode
 package-lock.json
+node_modules
