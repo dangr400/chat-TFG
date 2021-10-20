@@ -12,12 +12,12 @@ const Usuario = mongoose.model(
     username: String,
     email: String,
     password: String,
-    roles: [
+    configuracion: 
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Rol"
-      }
-    ]
+        publico: Boolean,
+        estado: String,
+        persistencia_msgs: Boolean
+      },
   })
 );
 module.exports = Usuario;
