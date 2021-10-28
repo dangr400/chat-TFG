@@ -15,9 +15,27 @@ const Usuario = mongoose.model(
     configuracion: 
       {
         publico: Boolean,
-        estado: String,
         persistencia_msgs: Boolean
       },
+    peticiones_contacto_enviadas:
+      {
+        id : {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
+        estado: String,
+        fecha: Date,
+      },
+    peticiones_contacto_recibidas:
+      {
+        id : {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
+        estado: String,
+        fecha: Date,
+      },
+    contactos:
+      [
+        {
+          type: mongoose.Schema.Types.ObjectId, ref: "Usuario"
+        }
+      ]
+      
   })
 );
 module.exports = Usuario;

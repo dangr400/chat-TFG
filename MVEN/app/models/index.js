@@ -21,6 +21,7 @@ db.mongoose = mongoose;
 db.url = dbConfig.url_atlas;
 db.usuario = require("./usuario.model.js");
 db.rol = require("./rol.model.js");
+db.grupos = require("./chatgroup.model.js");
 
 db.ROLES = ["user", "admin", "moderator"];
 

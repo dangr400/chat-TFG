@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
-const db = require("../models");
+/*const db = require("../models");
 const User = db.usuario;
-const Role = db.role;
+const Role = db.role;*/
 
 verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
@@ -15,11 +15,12 @@ verifyToken = (req, res, next) => {
     if (err) {
       return res.status(401).send({ message: "Unauthorized!" });
     }
+    console.log(decoded.id);
     req.userId = decoded.id;
     next();
   });
 };
-
+/*
 isAdmin = (req, res, next) => {
   User.findById(req.userId).exec((err, user) => {
     if (err) {
@@ -81,10 +82,8 @@ isModerator = (req, res, next) => {
     );
   });
 };
-
+*/
 const authJwt = {
-  verifyToken,
-  isAdmin,
-  isModerator
+  verifyToken
 };
 module.exports = authJwt;

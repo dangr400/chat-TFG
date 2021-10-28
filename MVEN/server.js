@@ -50,6 +50,7 @@ app.get("/", (req, res) => {
 // rutas
 require('./app/rutas/auth.routes')(app);
 require('./app/rutas/user.routes')(app);
+require('./app/rutas/grupo.routes')(app);
 
 // configurar puerto, a la escucha de peticiones
 const PORT = process.env.PORT || 8080;

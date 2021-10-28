@@ -1,8 +1,6 @@
-const config = require("../config/auth.config");
 const db = require("../models");
 const Grupo = db.chatgroup;
 const Usuario = db.usuario;
-const Mensaje = db.mensaje;
 
 exports.crearGrupo = (req, res) => {
     const grupo = new Grupo({
@@ -21,6 +19,16 @@ exports.crearGrupo = (req, res) => {
         res.send({ message: "Grupo creado!" });
     });
 };
+
+exports.gruposPublicos = (req, res) => {
+  Grupo.find({publico: true})
+  .exec((err, grupos) => {
+    if (err) {
+      res.status(500).send({ message: err});
+    }
+    res.status(200).send("x")
+  });
+}
 
 exports.agregarUsuario = (req, res) => {
     Grupo.findById(req.body.id)
