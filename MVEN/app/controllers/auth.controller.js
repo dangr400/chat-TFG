@@ -11,27 +11,18 @@ exports.signup = (req, res) => {
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8)
   });
-
+  if (!req.body.configuracion){
+    user.configuracion = {publico: false, persistencia_msgs: false};
+  }
+  else{
+    user.configuracion = req.body.configuracion;
+  }
   user.save((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
       return;
     }
-    if (!req.body.configuracion){
-      user.configuracion = {publico: false, persistencia_msgs: false};
-    }
-    else{
-      user.configuracion = req.body.configuracion;
-    }
-    user.peticiones_amistad_enviadas = {};
-    user.peticiones_amistad_recibidas = {};
-    user.save(err => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
-      res.send({ message: "Usuario registrado!" });
-    });
+    res.status(200).send({ message: "Usuario Registrado"});
   });
 };
 
@@ -39,6 +30,7 @@ exports.signin = (req, res) => {
   User.findOne({
     username: req.body.username
   })
+    .select("+password")
     .exec((err, user) => {
       if (err) {
         res.status(500).send({ message: err });
