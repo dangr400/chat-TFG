@@ -11,29 +11,15 @@ const Usuario = mongoose.model(
   new mongoose.Schema({
     username: String,
     email: String,
-    password: String,
+    password: {type: String, select: false},
     configuracion: 
       {
-        publico: Boolean,
-        persistencia_msgs: Boolean
-      },
-    peticiones_contacto_enviadas:
-      {
-        id : {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
-        estado: String,
-        fecha: Date,
-      },
-    peticiones_contacto_recibidas:
-      {
-        id : {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
-        estado: String,
-        fecha: Date,
+        publico: {type: Boolean, default: false},
+        persistencia_msgs: {type: Boolean, default: false}
       },
     contactos:
       [
-        {
-          type: mongoose.Schema.Types.ObjectId, ref: "Usuario"
-        }
+        {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"}
       ]
       
   })
