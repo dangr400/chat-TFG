@@ -1,4 +1,4 @@
-const { authJwt } = require("../middlewares");
+const { authJwt, verificarContactos } = require("../middlewares");
 const controller = require("../controllers/usuario.controller");
 
 module.exports = function(app) {
@@ -10,9 +10,17 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/test/contactos", controller.verContactos);
+  app.get("/api/test/contactos", [authJwt.verifyToken], controller.verContactos);
 
-  app.post("/api/test/enviarPeticion", [authJwt.verifyToken], controller.enviarPeticionContacto);
+  app.post("/api/test/enviarPeticion", [authJwt.verifyToken], [verificarContactos.comprobarContactoAgregado], [verificarContactos.comprobarPeticionExistente],  controller.enviarPeticionContacto);
+
+  app.post("/api/test/aceptarPeticion", [authJwt.verifyToken], controller.aceptarPeticion);
+
+  app.delete("/api/test/cancelarPeticion", [authJwt.verifyToken], controller.cancelarPeticion);
+
+  app.get("/api/test/verMisPeticiones", [authJwt.verifyToken], controller.verMisPeticiones);
+
+  app.get("/api/test/verPeticionesPendientes", [authJwt.verifyToken], controller.verPeticionesPendientes);
 
   app.get("/api/test/all", controller.allAccess);
 
