@@ -28,7 +28,16 @@
          ref: "Usuario"
        }
      ],
-      publico: Boolean
-   })
+      publico: Boolean,
+      mensajes: 
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Mensaje"
+      }
+   },
+   {
+    timestamps : true,
+    collection : "chatgroups",
+  })
  );
  module.exports = ChatGroup;

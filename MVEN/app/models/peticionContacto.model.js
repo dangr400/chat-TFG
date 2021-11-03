@@ -9,10 +9,15 @@
  const Peticion = mongoose.model(
    "PeticionContacto",
    new mongoose.Schema({
-     idEmisor: {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
-     idReceptor: {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
-     estado: {type: String, default: "PENDIENTE"},
-     fecha: {type: Date, default: Date.now}
-   })
+      idEmisor: {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
+      idReceptor: {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
+      estado: {type: String, default: "PENDIENTE"},
+      fecha: {type: Date, default: Date.now}
+   },
+   {
+      timestamps : true,
+      collection : "peticionescontacto",
+   }
+   )
  );
  module.exports = Peticion;

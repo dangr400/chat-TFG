@@ -22,6 +22,10 @@ const Usuario = mongoose.model(
         {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"}
       ]
       
+  },
+  {
+    timestamps : true,
+    collection : "usuarios",
   })
 );
 module.exports = Usuario;
