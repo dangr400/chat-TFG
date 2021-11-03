@@ -1,4 +1,4 @@
-const { authJwt } = require("../middlewares");
+const { authJwt , verificarGrupos } = require("../middlewares");
 const controller = require("../controllers/chatGroup.controller");
 
 module.exports = function(app) {
@@ -10,9 +10,17 @@ module.exports = function(app) {
           next();
     });
 
-    app.post("/api/grupos/crear-grupo", [authJwt.verifyToken], controller.crearGrupo);
+    app.post("/api/grupos/nuevoGrupo", [authJwt.verifyToken], controller.crearGrupo);
 
-    app.post("/api/grupos/add-usuario", [authJwt.verifyToken], controller.agregarUsuario);
+    app.delete("/api/grupos/eliminarGrupo", [authJwt.verifyToken], controller.eliminarGrupo);
 
-    app.get("/api/grupos/grupos-publicos", [authJwt.verifyToken], controller.gruposPublicos);
+    app.get("/api/grupos/misGrupos", [authJwt.verifyToken], controller.misGrupos);
+
+    app.get("/api/grupos/gruposPertenecientes", [authJwt.verifyToken], controller.integranteEnGrupos);
+
+    app.get("/api/grupos/gruposModerados", [authJwt.verifyToken], controller.moderadorEnGrupos);
+
+    app.post("/api/grupos/agregarUsuario", [authJwt.verifyToken], [verificarGrupos.comprobarUsuarioAgregado], controller.agregarUsuario);
+
+    app.get("/api/grupos/gruposPublicos", controller.gruposPublicos);
 };
