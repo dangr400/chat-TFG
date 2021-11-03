@@ -7,18 +7,27 @@
  */
 // paquetes necesarios
 require('dotenv').config();
+const http = require("http");
 const express = require("express");
 const cors = require("cors");
+const logger = require("morgan");
 // aplicación de Express. Necesario para las APIs REST
 const app = express();
 // variable que contiene lo necesario para poder acceder a la base de datos
 const db = require("./app/models");
+// puerto donde escucha el servidor
+const port = process.env.PORT || 8080
 // middleware para Cross-Origin Resource Sharing (para solicitar recursos desde un dominio distinto al que sirve el primer recurso)
 var corsOptions = {
   origin: "http://localhost:8081"
 };
 
-const Rol = db.rol;
+// añadir puerto
+app.set("port", port);
+
+// añadir logger
+app.use(logger);
+
 // añadir CORS a la aplicación
 app.use(cors(corsOptions));
 
@@ -52,44 +61,30 @@ require('./app/rutas/auth.routes')(app);
 require('./app/rutas/user.routes')(app);
 require('./app/rutas/grupo.routes')(app);
 
+// capturador de accesos a la API que no existen
+app.use('*', (req, res) => {
+  return res.status(404).json({
+    success: false,
+    message: 'No existe la ruta especificada'
+  })
+});
+
+// Crear servidor HTTP. 
+const server = http.createServer(app);
+// Escuchar en el puerto seleccionado.
+server.listen(port);
+// Capturador de eventos cuando el servidor esté a la espera de conexiones.
+server.on("listening", () => {
+  console.log(`Servidor ejecutandose en puerto: http://localhost:${port}/`)
+});
+
+/*
 // configurar puerto, a la escucha de peticiones
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Servidor ejecutandose en puerto ${PORT}.`);
 });
-
+*/
 function initial() {
-  Rol.estimatedDocumentCount((err, count) => {
-    if (!err && count === 0) {
-      new Rol({
-        name: "user"
-      }).save(err => {
-        if (err) {
-          console.log("error", err);
-        }
-
-        console.log("added 'user' to roles collection");
-      });
-
-      new Rol({
-        name: "moderator"
-      }).save(err => {
-        if (err) {
-          console.log("error", err);
-        }
-
-        console.log("added 'moderator' to roles collection");
-      });
-
-      new Rol({
-        name: "admin"
-      }).save(err => {
-        if (err) {
-          console.log("error", err);
-        }
-
-        console.log("added 'admin' to roles collection");
-      });
-    }
-  });
+  console.log("configuraciones iniciales finalizadas.");
 }
