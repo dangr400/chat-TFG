@@ -6,8 +6,7 @@
  */
 const mongoose = require("mongoose");
 
-const Usuario = mongoose.model(
-  "Usuario",
+const UsuarioSchema = 
   new mongoose.Schema({
     username: String,
     email: String,
@@ -19,13 +18,24 @@ const Usuario = mongoose.model(
       },
     contactos:
       [
-        {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"}
+        {type: mongoose.Schema.Types.ObjectId, ref: "usuarios"}
       ]
       
   },
   {
     timestamps : true,
     collection : "usuarios",
-  })
-);
+  });
+
+UsuarioSchema.statics.getUserByIds = async function (ids) {
+  try {
+    const users = await this.find({ _id: { $in: ids } });
+    return users;
+  } catch (error) {
+    console.log("ERROR ENCONTRANDO USUARIO");
+    throw error;
+  }
+}
+
+const Usuario = mongoose.model("usuarios", UsuarioSchema);
 module.exports = Usuario;
