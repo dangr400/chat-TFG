@@ -19,6 +19,8 @@
     "vee-validate": "^4.5.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.11",
+    "vue-table-dynamic": "^0.4.10",
+    "vue-tree-nav": "0.0.16",
     "vuex": "^4.0.2",
     "yup": "^0.32.11"
   },
