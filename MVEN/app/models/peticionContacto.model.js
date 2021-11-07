@@ -7,10 +7,10 @@
  const mongoose = require("mongoose");
 
  const Peticion = mongoose.model(
-   "PeticionContacto",
+   "peticioncontacto",
    new mongoose.Schema({
-      idEmisor: {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
-      idReceptor: {type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
+      idEmisor: {type: mongoose.Schema.Types.ObjectId, ref: "usuarios"},
+      idReceptor: {type: mongoose.Schema.Types.ObjectId, ref: "usuarios"},
       estado: {type: String, default: "PENDIENTE"},
       fecha: {type: Date, default: Date.now}
    },
