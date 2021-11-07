@@ -25,6 +25,7 @@ db.grupos = require("./chatgroup.model.js");
 db.peticion = require("./peticionContacto.model.js");
 db.mensajeGrupo = require("./mensajeGrupo.model.js");
 db.mensajePrivado = require("./mensajePrivado.model.js");
+db.salas = require("./salas.model.js");
 
 db.ROLES = ["user", "admin", "moderator"];
 
