@@ -17,15 +17,18 @@
   "author": "Daniel",
   "license": "ISC",
   "dependencies": {
+    "@withvoid/make-validation": "^1.0.5",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.8",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "socket.io": "^4.3.1"
   },
   "devDependencies": {
+    "@socket.io/admin-ui": "^0.2.0",
     "nodemon": "^2.0.14"
   }
 }
