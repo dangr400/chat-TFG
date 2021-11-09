@@ -9,31 +9,40 @@ module.exports = function(app) {
     );
     next();
   });
+  
+  app.get("/usuarios", [authJwt.verifyToken], controller.getUsuario);
 
-  app.get("/api/test/contactos", [authJwt.verifyToken], controller.verContactos);
+  app.get("/usuarios/contactos", [authJwt.verifyToken], controller.getContactos);
 
-  app.post("/api/test/enviarPeticion", [authJwt.verifyToken], [verificarContactos.comprobarContactoAgregado], [verificarContactos.comprobarPeticionExistente],  controller.enviarPeticionContacto);
+  app.get("/usuarios/contactos/:nombre", [authJwt.verifyToken], controller.getContactosNombre);
 
-  app.post("/api/test/aceptarPeticion", [authJwt.verifyToken], controller.aceptarPeticion);
+  /* TODO: FINALIZAR METODO PARA ELIMINAR CONTACTO */
+  //app.delete("/usuarios/contactos/eliminarContacto", [authJwt.verifyToken], controller.eliminarContacto);
 
-  app.delete("/api/test/cancelarPeticion", [authJwt.verifyToken], controller.cancelarPeticion);
+  app.post("/usuarios/enviarPeticion", [authJwt.verifyToken], [verificarContactos.comprobarContactoAgregado], [verificarContactos.comprobarPeticionExistente],  controller.enviarPeticionContacto);
 
-  app.get("/api/test/verMisPeticiones", [authJwt.verifyToken], controller.verMisPeticiones);
+  app.post("/usuarios/aceptarPeticion", [authJwt.verifyToken], controller.aceptarPeticion);
 
-  app.get("/api/test/verPeticionesPendientes", [authJwt.verifyToken], controller.verPeticionesPendientes);
+  app.delete("/usuarios/cancelarPeticion", [authJwt.verifyToken], controller.cancelarPeticion);
 
-  app.get("/api/test/all", controller.allAccess);
+  app.get("/usuarios/verMisPeticiones", [authJwt.verifyToken], controller.verMisPeticiones);
 
-  app.get("/api/test/user/:userId", [authJwt.verifyToken], controller.userBoard);
+  app.get("/usuarios/verPeticionesPendientes", [authJwt.verifyToken], controller.verPeticionesPendientes);
+
+  app.get("/usuarios/misGrupos", [authJwt.verifyToken], controller.misGrupos);
+
+  app.get("/usuarios/all", controller.allAccess);
+
+  app.get("/usuarios/user/:userId", [authJwt.verifyToken], controller.userBoard);
 
   app.get(
-    "/api/test/mod",
+    "/usuarios/mod",
     [authJwt.verifyToken],
     controller.moderatorBoard
   );
 
   app.get(
-    "/api/test/admin",
+    "/usuarios/admin",
     [authJwt.verifyToken],
     controller.adminBoard
   );

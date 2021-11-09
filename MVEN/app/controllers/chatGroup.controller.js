@@ -21,6 +21,19 @@ exports.crearGrupo = (req, res) => {
     });
 };
 
+exports.permisosGrupo = (req, res) => {
+  Grupo.find({_id: req.params.grupoId , $or:[{creador: req.userId},{moderadores: req.userId}]})
+  .exec((err, grupo) => {
+    if (err) {
+      res.status(404).send({success: false})
+    }
+    if (!grupo){
+      res.status(200).send({success: false})
+    }
+    res.status(200).send({success: true, grupo});
+  })
+}
+
 exports.nuevoMensaje = (req, res) => {
   const mensaje = new Mensaje({
     origen: req.userId,
@@ -35,7 +48,7 @@ exports.nuevoMensaje = (req, res) => {
     }
     res.status(200).send({ message: "ok"});
   })
-}
+};
 
 exports.verMensajes = (req, res) => {
   Mensaje.find({destino: req.body.grupoId})
@@ -46,7 +59,7 @@ exports.verMensajes = (req, res) => {
     }
     res.status(200).send(msgs);
   })
-}
+};
 
 exports.eliminarGrupo = (req, res) => {
   Grupo.findByIdAndDelete(req.body.grupoId)
@@ -58,7 +71,7 @@ exports.eliminarGrupo = (req, res) => {
     console.log(exito);
     res.status(200).send({ message: "grupo eliminado"});
   });
-}
+};
 
 exports.misGrupos = (req, res) => {
   Grupo.find({creador: req.userId})
@@ -69,18 +82,20 @@ exports.misGrupos = (req, res) => {
     }
     res.status(200).send(grupos);
   })
-}
+};
 
 exports.integranteEnGrupos = (req, res) => {
   Grupo.find({integrantes: req.userId})
+  .populate("integrantes", "username")
   .exec((err, grupos) => {
     if (err) {
+      console.log(err);
       res.status(500).send({ message: err});
       return;
     }
     res.status(200).send(grupos);
   });
-}
+};
 
 exports.moderadorEnGrupos = (req, res) => {
   Grupo.find({moderadores: req.userId})
@@ -91,7 +106,7 @@ exports.moderadorEnGrupos = (req, res) => {
     }
     res.status(200).send(grupos);
   });
-}
+};
 
 exports.gruposPublicos = (req, res) => {
   Grupo.find({publico: true})
@@ -102,7 +117,7 @@ exports.gruposPublicos = (req, res) => {
     }
     res.status(200).send(grupos);
   });
-}
+};
 
 exports.agregarUsuario = (req, res) => {
     Grupo.findById(req.body.grupoId)

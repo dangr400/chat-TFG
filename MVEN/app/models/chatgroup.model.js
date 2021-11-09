@@ -14,18 +14,18 @@
       creador: 
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Usuario"
+          ref: "usuarios"
         },
       moderadores: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Usuario"
+          ref: "usuarios"
         }
       ],
       integrantes: [
        {
          type: mongoose.Schema.Types.ObjectId,
-         ref: "Usuario"
+         ref: "usuarios"
        }
      ],
       publico: Boolean,

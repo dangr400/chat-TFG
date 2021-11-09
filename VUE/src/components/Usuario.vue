@@ -1,76 +1,43 @@
 <template>
-  <div v-if="usuarioActual" class="edit-form">
-    <h4>Tutorial</h4>
-    <form>
-      <div class="form-group">
-        <label for="nombre">Nombre</label>
-        <input type="text" class="form-control" id="nombre"
-          v-model="usuarioActual.nombre"
-        />
-      </div>
-      <div class="form-group">
-        <label for="contra">Contraseña</label>
-        <input type="text" class="form-control" id="contra"
-          v-model="usuarioActual.contra"
-        />
-      </div>
-
-    </form>
-
-    <button class="badge badge-danger mr-2"
-      @click="eliminarUsuario"
-    >
-      Eliminar
-    </button>
-
-    <button type="submit" class="badge badge-success"
-      @click="actualizarUsuario"
-    >
-      Actualizar
-    </button>
-    <p>{{ message }}</p>
-  </div>
-
-  <div v-else>
-    <br />
-    <p>Por favor haga click en un usuario...</p>
+  <div class="container">
+    <header v-if="getUsuario" class="jumbotron">
+      <h3>Pantalla de contactos</h3>
+    </header>
+    <header v-else class="jumbotron">
+      <h3>No ha iniciado sesion</h3>
+    </header>
+    
   </div>
 </template>
 
 <script>
-import UsuariosDataService from "../services/UsuariosDataService";
+import UserService from "../services/user.service";
 
 export default {
-  name: "tutorial",
+  name: "usuarios",
   data() {
     return {
       usuarioActual: null,
-      message: ''
+      message: '',
+
     };
   },
   methods: {
-    getUsuario(id) {
-      UsuariosDataService.get(id)
-        .then(response => {
-          this.usuarioActual = response.data;
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
+    getUsuario() {
+      return this.$store.state.auth.user;
     },
 
     updatePublished(status) {
       var data = {
-        id: this.usuarioActual.id,
-        nombre: this.usuarioActual.nombre,
-        contra: this.usuarioActual.contra,
+        id: this.getUsuario.id,
+        nombre: this.getUsuario.nombre,
+        contra: this.getUsuario.contra,
         published: status
       };
 
-      UsuariosDataService.update(this.usuarioActual.id, data)
+      UserService.update(this.getUsuario.id, data)
         .then(response => {
-          this.usuarioActual.published = status;
+          this.getUsuario.published = status;
           console.log(response.data);
         })
         .catch(e => {
@@ -79,7 +46,7 @@ export default {
     },
 
     actualizarUsuario() {
-      UsuariosDataService.update(this.usuarioActual.id, this.usuarioActual)
+      UserService.update(this.getUsuario.id, this.getUsuario)
         .then(response => {
           console.log(response.data);
           this.message = 'Usuario actualizado correctamente';
@@ -90,7 +57,7 @@ export default {
     },
 
     eliminarUsuario() {
-      UsuariosDataService.delete(this.usuarioActual.id)
+      UserService.delete(this.getUsuario.id)
         .then(response => {
           console.log(response.data);
           this.$router.push({ name: "usuarios" });
@@ -99,10 +66,11 @@ export default {
           console.log(e);
         });
     }
+  
   },
   mounted() {
     this.message = '';
-    this.getUsuario(this.$route.params.id);
+    this.getUsuario();
   }
 };
 </script>

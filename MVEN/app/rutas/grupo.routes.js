@@ -18,6 +18,8 @@ module.exports = function(app) {
 
     app.get("/api/grupos/gruposPertenecientes", [authJwt.verifyToken], controller.integranteEnGrupos);
 
+    app.get("/api/grupos/permisosGrupo/:grupoId", [authJwt.verifyToken], controller.permisosGrupo);
+
     app.get("/api/grupos/gruposModerados", [authJwt.verifyToken], controller.moderadorEnGrupos);
 
     app.post("/api/grupos/agregarUsuario", [authJwt.verifyToken], [verificarGrupos.comprobarUsuarioAgregado], controller.agregarUsuario);
