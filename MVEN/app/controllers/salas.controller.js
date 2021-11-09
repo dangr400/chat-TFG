@@ -1,25 +1,26 @@
 const makeValidation = require('@withvoid/make-validation');
-const { Salas }  = require("../models/salas.model");
+const Salas  = require("../models/salas.model");
 const Mensajes = require("../models/mensaje.model");
 const Usuarios = require("../models/usuario.model");
 
 exports.initiateGrupos = async (req, res) => {
     try {
-      const { userId: iniciadorChat } = req.userId;
-      const allUserIds = [iniciadorChat];
-      const chatRoom = await Salas.iniciarChat(allUserIds, iniciadorChat);
+      const iniciador = req.userId;
+      const grupo = req.body._id;
+      const chatRoom = await Salas.iniciarChatGrupo(grupo , iniciador);
       return res.status(200).json({ success: true, chatRoom });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ success: false, message: error });
     }
 };
 
 exports.initiateUsuarios = async (req, res) => {
   try {
-    const { hablando, tipo } = req.body;
-    const { userId: iniciadorChat } = req;
+    const { hablando } = req.body;
+    const iniciadorChat = req.userId;
     const allUserIds = [...hablando, iniciadorChat];
-    const chatRoom = await Salas.iniciarChat(allUserIds, tipo, iniciadorChat);
+    const chatRoom = await Salas.iniciarChatUsuarios(allUserIds);
     return res.status(200).json({ success: true, chatRoom });
   } catch (error) {
 
@@ -49,7 +50,7 @@ exports.postMessage = async (req, res) => {
       return res.status(500).json({ success: false, error: error })
     }
   };
-
+/*
 exports.getRecentConversation = async (req, res) => {
 try {
     const usuarioLogueado = req.userId;
@@ -67,10 +68,10 @@ try {
     return res.status(500).json({ success: false, error: error })
 }
 },
-
+*/
 exports.getConversationByRoomId = async (req, res) => {
     try {
-      const { salaId } = req.params;
+      const salaId = req.params.roomId;
       const sala = await Salas.getChatRoomByRoomId(salaId)
       if (!sala) {
         return res.status(400).json({
