@@ -77,7 +77,6 @@ exports.getContactosNombre = (req, res) => {
 }
 
 exports.enviarPeticionContacto = (req, res) => {
-  console.log(req.body);
   const nuevaPeticion = new Peticion({
     idEmisor: req.userId,
     idReceptor: req.body.contactoId,
