@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <div class="container">
+    <div v-if="!enChat" class="container">
         <h3>
         <strong>Conversaciones</strong>
       </h3>
@@ -51,8 +51,10 @@
         </li>
       </ul>
     </div>
-    <chat v-if="enChat" :grupo="currentGrupo"></chat>
-
+    <div v-else>
+      <chat v-if="enChat" v-bind:grupo="currentGrupo" v-bind:usuario="currentContacto"></chat>
+    </div>
+    
   </div>
 </template>
 
@@ -60,14 +62,18 @@
 
 import GruposService from "../services/grupos.service";
 import UserService from "../services/user.service";
-import chat from "./Chat.vue";
+import ChatService from "../services/chat.service";
+import chat from "../views/Chat.vue";
 
 export default {
     components: {
         chat,
     },
+    props: {
+      grupo: Object,
+      usuario: Object,
+    },
     name: "conversaciones-list",
-
     data() {
         return {
             // para grupos
@@ -124,12 +130,32 @@ export default {
 
         iniciarChatGrupo(grupo) {
             console.log(grupo);
-            this.enChat = true;
+            ChatService.iniciarChatGrupo(grupo)
+            .then(response => {
+                console.log(response);
+                const idSala = response.data.chatRoom.chatRoomId;
+                this.$router.push({path: `/chat/${idSala}`})
+                })
+                .catch(e => {
+                console.log(e);
+                });
         },
 
         iniciarChatUsuario(usuario) {
             console.log(usuario);
-            this.$router.push({path: `/chatU/${usuario._id}`})
+            const usuariosChat = {
+              usuario1: {id : usuario._id, nombre: usuario.username},
+              usuario2: {id : this.$store.state.auth.user.id, nombre: this.$store.state.auth.user.username},
+            }
+            ChatService.iniciarChatUsuarios(usuariosChat)
+            .then(response => {
+                console.log(response);
+                const idSala = response.data.chatRoom.chatRoomId;
+                this.$router.push({path: `/chat/${idSala}`})
+                })
+                .catch(e => {
+                console.log(e);
+                });
         },
     },
     mounted() {
