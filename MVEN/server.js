@@ -1,7 +1,5 @@
 // paquetes necesarios
 const { Server } = require("socket.io");
-const { instrument } = require("@socket.io/admin-ui");
-const WebSockets = require("./app/utils/WebSockets.js");
 require('dotenv').config();
 const http = require("http");
 const express = require("express");
@@ -72,20 +70,69 @@ app.use('*', (req, res) => {
 
 // Crear servidor HTTP. 
 const server = http.createServer(app);
-// Crear conexion por sockets
-const io = new Server(server, {
+global.io = new Server(server, {
   cors: {
-    origin: ["https://admin.socket.io"],
-    credentials: true
+    origin: "http://localhost:8081",
+    methods: ["GET", "POST"]
   }
-});
+  });
+let usuariosConectados = [];
+global.io.on("connection", (socket) => {
+  // unirse a una sala
+  socket.on('join', function(datos) {
+    socket.join(datos.sala);
+  });
 
-instrument(io, {
-  auth: false
-});
+  socket.on('enviarMensaje', function(datos) {
+    function getNombreSocket(listaUsuarios) {
+      return listaUsuarios.socketId === socket.id;
+  }
+  
+   const usuario = usuariosConectados.find(getNombreSocket);
+    
+    const enviar = {
+      mensaje: datos.mensaje,
+      emisor: usuario.username,
+    };
+    global.io.to(datos.sala).emit('emitirMensaje', enviar);
+    console.log(datos);
+  });
 
-global.io = io.listen(server);
-global.io.on('connection', WebSockets.connection);
+  socket.on("salirChat", () => {
+    socket.disconnect();
+  })
+  socket.on("disconnecting", (reason) => {
+    for (var i = usuariosConectados.length - 1; i >= 0; --i) {
+      if (usuariosConectados[i].socketId == socket.id) {
+          usuariosConectados.splice(i,1);
+      }
+    }
+  });
+
+  socket.on("disconnect", (socket) => {
+    console.log('Got disconnect!');
+  });
+
+  // añadir identidad del usuario mapeado al socket id
+  socket.on("identity", (user) => {
+    var actualizar = false;
+    for (var i = usuariosConectados.length - 1; i >= 0; --i) {
+      if (usuariosConectados[i].userId == user.id) {
+          usuariosConectados[i].socketId = socket.id;
+          actualizar = true;
+          console.log("Actualizado usuario")
+      }
+    }
+    if (!actualizar){
+      usuariosConectados.push({
+        socketId: socket.id,
+        username: user.username,
+        userId: user.id,
+      });
+      console.log("Nuevo usuario conectado");
+    }
+  });
+});
 
 // Escuchar en el puerto seleccionado.
 server.listen(port);
@@ -93,6 +140,8 @@ server.listen(port);
 server.on("listening", () => {
   console.log(`Servidor ejecutandose en puerto: http://localhost:${port}/`)
 });
+
+
 
 /*
 // configurar puerto, a la escucha de peticiones

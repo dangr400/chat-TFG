@@ -32,6 +32,11 @@ const routes = [
     component: Comms,
   },
   {
+    path: "/chat/:salaId",
+    name: "chat",
+    component: () => import("./views/Chat.vue")
+  },
+  {
     path: "/grupos/nuevo",
     component: () => import("./components/NuevoGrupo")
   },
