@@ -1,12 +1,10 @@
 const mongoose = require("mongoose");
 
-const CHAT_ROOM_TYPES = {
-    GRUPO: "grupo",
-    USUARIOS: "usuarios",
-  };
-
 const SalasSchema = new mongoose.Schema(
         {
+            hablando: [
+                {type: mongoose.Schema.Types.ObjectId, ref: "usuarios"}
+            ],
             grupoId: {type: mongoose.Schema.Types.ObjectId, ref: "chatgroups"},
         },
         {
@@ -18,28 +16,25 @@ const SalasSchema = new mongoose.Schema(
 SalasSchema.statics.iniciarChatGrupo = async function (grupo, iniciador) {
     try{
         const SalaDisponible = await this.findOne({
-        grupoId: grupo._id
+        grupoId: grupo
         });
         if (SalaDisponible) {
             return {
                 isNew: false,
                 message: 'retornando una sala de chat antigua',
                 chatRoomId: SalaDisponible._doc._id,
-                tipo: SalaDisponible._doc.type,
+                hablando: SalaDisponible._doc.hablando,
             };
         }
         else {
             const newRoom = await this.create({ 
                hablando: [iniciador],
-               tipo: "grupo",
-               iniciadorChat: iniciador,
-               grupoId: grupo._id,
+               grupoId: grupo,
             });
             return {
                 isNew: true,
                 message: 'creando nueva sala de chat',
-                chatRoomId: NetworkInformation._doc._id,
-                tipo: newRoom._doc.type,
+                chatRoomId: newRoom._doc._id,
             };
         }
     } catch (error) {
@@ -48,13 +43,13 @@ SalasSchema.statics.iniciarChatGrupo = async function (grupo, iniciador) {
     }
 };
 
-SalasSchema.statics.iniciarChatUsuarios = async function (usuarios, iniciador) {
+SalasSchema.statics.iniciarChatUsuarios = async function (usuarios) {
     try{
         const SalaDisponible = await this.findOne({
         hablando: {
             $all: [...usuarios],
         },
-        tipo : "usuarios",
+        grupoId: null,
         });
         if (SalaDisponible) {
             return {
@@ -66,14 +61,12 @@ SalasSchema.statics.iniciarChatUsuarios = async function (usuarios, iniciador) {
         }
         else {
             const newRoom = await this.create({ 
-                hablando: [iniciador],
-                tipo: tipo,
-                iniciadorChat: iniciador,
+                hablando: [...usuarios],
              });
             return {
                 isNew: true,
                 message: 'creando nueva sala de chat',
-                chatRoomId: NetworkInformation._doc._id,
+                chatRoomId: newRoom._doc._id,
                 tipo: newRoom._doc.type,
             };
         }
@@ -93,8 +86,7 @@ SalasSchema.statics.getChatRoomByRoomId = async function (salaId) {
     }
   }
 
-const Sala = mongoose.model('Salas', SalasSchema);
+const Salas = mongoose.model('Salas', SalasSchema);
 
-module.exports = Sala;
-module.exports = CHAT_ROOM_TYPES;
+module.exports = Salas;
 //export default mongoose.model("Salas", chatRoomSchema);
