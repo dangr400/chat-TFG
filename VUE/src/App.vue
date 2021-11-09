@@ -3,14 +3,8 @@
     <nav class="navbar navbar-expand navbar-dark bg-dark">
       <router-link to="/" class="navbar-brand">TFG</router-link>
       <div class="navbar-nav mr-auto">
-        <li v-if="showAdminBoard" class="nav-item">
-          <router-link to="/admin" class="nav-link">Admin Board</router-link>
-        </li>
-        <li v-if="showModeratorBoard" class="nav-item">
-          <router-link to="/mod" class="nav-link">Moderator Board</router-link>
-        </li>
         <li class="nav-item">
-          <router-link v-if="currentUser" to="/comms" class="nav-link">Contactos/Grupos</router-link>
+          <router-link v-if="currentUser" to="/comms" class="nav-link">Comunicaciones</router-link>
         </li>
       </div>
 
