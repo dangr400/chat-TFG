@@ -68,7 +68,6 @@ exports.eliminarGrupo = (req, res) => {
       res.status(500).send({ message: err});
       return;
     }
-    console.log(exito);
     res.status(200).send({ message: "grupo eliminado"});
   });
 };
