@@ -84,7 +84,8 @@ export default {
     },
 
     enviarPeticion() {
-      UserService.enviarPeticionContacto(this.nombreUsrPeticion)
+      const usuarioPeticion = {nombre: this.nombreUsrPeticion}
+      UserService.enviarPeticionContacto(usuarioPeticion)
         .then(response => {
           this.nombreUsrPeticion = "";
           console.log(response.data);
