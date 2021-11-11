@@ -77,19 +77,26 @@ exports.getContactosNombre = (req, res) => {
 }
 
 exports.enviarPeticionContacto = (req, res) => {
-  const nuevaPeticion = new Peticion({
-    idEmisor: req.userId,
-    idReceptor: req.body.contactoId,
-    estado: "PENDIENTE",
-    fecha: new Date(),
-  })
-  nuevaPeticion.save((err) => {
-    if (err) {
+    User.getUserIdByName(req.body.nombre)
+    .then(usuarioId => {
+      const nuevaPeticion = new Peticion({
+        idEmisor: req.userId,
+        idReceptor: usuarioId,
+        estado: "PENDIENTE",
+        fecha: new Date(),
+      });
+
+      nuevaPeticion.save((err, peticion) => {
+        if (err) {
+          res.status(500).send({ message: err});
+          return;
+        }
+        res.status(200).send({ message: "Peticion Enviada"});
+      });
+
+    }).catch(err => {
       res.status(500).send({ message: err});
-      return;
-    }
-    res.status(200).send({ message: "Peticion Enviada"});
-  })
+    })
 }
 
 exports.aceptarPeticion = (req, res) => {
