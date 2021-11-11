@@ -101,7 +101,7 @@ global.io.on("connection", (socket) => {
   socket.on("salirChat", () => {
     socket.disconnect();
   })
-  socket.on("disconnecting", (reason) => {
+  socket.on("disconnecting", () => {
     for (var i = usuariosConectados.length - 1; i >= 0; --i) {
       if (usuariosConectados[i].socketId == socket.id) {
           usuariosConectados.splice(i,1);
@@ -109,7 +109,7 @@ global.io.on("connection", (socket) => {
     }
   });
 
-  socket.on("disconnect", (socket) => {
+  socket.on("disconnect", () => {
     console.log('Got disconnect!');
   });
 
