@@ -37,5 +37,16 @@ UsuarioSchema.statics.getUserByIds = async function (ids) {
   }
 }
 
+UsuarioSchema.statics.getUserIdByName = async function (nombre) {
+  try {
+    const usuario = await this.findOne({ username: nombre });
+    return usuario._id;
+  } catch (error) {
+    console.log("Error buscando usuario:\n" + error);
+    throw error;
+  }
+  
+}
+
 const Usuario = mongoose.model("usuarios", UsuarioSchema);
 module.exports = Usuario;
