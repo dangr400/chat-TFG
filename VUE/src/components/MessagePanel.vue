@@ -71,7 +71,6 @@ export default {
   margin-top: 5px;
 }
 .form {
-    position: fixed;
     bottom: 0%;
     left: 50%;
   padding: 10px;
