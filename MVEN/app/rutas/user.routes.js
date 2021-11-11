@@ -19,7 +19,7 @@ module.exports = function(app) {
   /* TODO: FINALIZAR METODO PARA ELIMINAR CONTACTO */
   //app.delete("/usuarios/contactos/eliminarContacto", [authJwt.verifyToken], controller.eliminarContacto);
 
-  app.post("/usuarios/enviarPeticion", [authJwt.verifyToken], [verificarContactos.comprobarContactoAgregado], [verificarContactos.comprobarPeticionExistente],  controller.enviarPeticionContacto);
+  app.post("/usuarios/enviarPeticion", [authJwt.verifyToken], [verificarContactos.comprobarExisteUsuario],[verificarContactos.comprobarContactoAgregado], [verificarContactos.comprobarPeticionExistente],  controller.enviarPeticionContacto);
 
   app.post("/usuarios/aceptarPeticion", [authJwt.verifyToken], controller.aceptarPeticion);
 
