@@ -10,6 +10,13 @@
           >
             Enviar
           </button>
+          <div
+            v-if="message"
+            class="alert"
+            :class="successful ? 'alert-success' : 'alert-danger'"
+            >
+                    {{ message }}
+          </div>
         </div>
       </div>
     </div>
@@ -51,7 +58,12 @@
         </div>
         <div v-else>
             <br />
-            <p>Seleccione Peticion...</p>
+            <div v-if="mensajeGestionarPeticion">
+              {{ message }}
+            </div>
+            <div v-else>
+              <p>Seleccione Peticion...</p>
+            </div>
         </div>
         </div>
     </div>
@@ -69,6 +81,10 @@ export default {
       currentIndex: -1,
       username: "",
       nombreUsrPeticion: "",
+      message:"",
+      successful:false,
+      mensajeEnviarPeticion: false,
+      mensajeGestionarPeticion: false,
     };
   },
   methods: {
@@ -88,7 +104,14 @@ export default {
       UserService.enviarPeticionContacto(usuarioPeticion)
         .then(response => {
           this.nombreUsrPeticion = "";
-          console.log(response.data);
+          this.message = response.data.message;
+          this.mensajeEnviarPeticion = true;
+          this.successful = response.data.success;
+          setTimeout(() => {
+            this.message = "";
+            this.mensajeEnviarPeticion = false;
+            this.successful = false;
+          }, 2000);
         })
         .catch(e => {
           console.log(e);
@@ -99,6 +122,12 @@ export default {
         UserService.aceptarPeticion(peticion)
             .then(response => {
                 console.log(response.data);
+                this.message = response.data.message;
+                this.mensajeEnviarPeticion = true;
+                setTimeout(function(){
+                  this.message = "";
+                  this.mensajeEnviarPeticion = false;
+                }, 2000);
                 this.refreshList();
             })
             .catch(e => {
@@ -110,6 +139,12 @@ export default {
         UserService.cancelarPeticion(peticion)
             .then(response => {
                 console.log(response.data);
+                this.message = response.data.message;
+                this.mensajeEnviarPeticion = true;
+                setTimeout(function(){
+                  this.message = "";
+                  this.mensajeEnviarPeticion = false;
+                }, 2000);
                 this.refreshList();
             })
             .catch(e => {
