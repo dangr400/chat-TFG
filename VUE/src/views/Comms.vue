@@ -4,10 +4,10 @@
         <h3>
             <strong>Comunicaciones</strong>
         </h3>
-        <button @click="activarContactos">Contactos</button>
-        <button @click="activarGrupos">Grupos</button>
-        <button @click="activarPeticiones">Peticiones</button>
-        <button @click="activarConversaciones">Acceder Conversacion</button>
+        <button class="btn btn-outline-secondary" @click="activarContactos">Contactos</button>
+        <button class="btn btn-outline-secondary" @click="activarGrupos">Grupos</button>
+        <button class="btn btn-outline-secondary" @click="activarPeticiones">Peticiones</button>
+        <button class="btn btn-outline-secondary" @click="activarConversaciones">Acceder Conversacion</button>
     </header>
     <usuarioslist v-if="mostrarContactos"/>
     <peticioneslist v-if="mostrarPeticiones"/>

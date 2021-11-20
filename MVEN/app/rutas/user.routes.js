@@ -16,8 +16,7 @@ module.exports = function(app) {
 
   app.get("/usuarios/contactos/:nombre", [authJwt.verifyToken], controller.getContactosNombre);
 
-  /* TODO: FINALIZAR METODO PARA ELIMINAR CONTACTO */
-  //app.delete("/usuarios/contactos/eliminarContacto", [authJwt.verifyToken], controller.eliminarContacto);
+  app.delete("/usuarios/contactos/eliminarContacto", [authJwt.verifyToken], controller.eliminarContacto);
 
   app.post("/usuarios/enviarPeticion", [authJwt.verifyToken], [verificarContactos.comprobarExisteUsuario],[verificarContactos.comprobarContactoAgregado], [verificarContactos.comprobarPeticionExistente],  controller.enviarPeticionContacto);
 

@@ -25,4 +25,6 @@ module.exports = function(app) {
     app.post("/api/grupos/agregarUsuario", [authJwt.verifyToken], [verificarGrupos.comprobarUsuarioAgregado], controller.agregarUsuario);
 
     app.get("/api/grupos/gruposPublicos", controller.gruposPublicos);
+
+    app.get("/api/grupos/:id", [authJwt.verifyToken], controller.getGrupoPorId);
 };
