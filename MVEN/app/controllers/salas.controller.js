@@ -40,7 +40,7 @@ exports.postMessage = async (req, res) => {
       if (!validacion.success) return res.status(400).json({ ...validacion });
   
       const messagePayload = {
-        messageText: req.body.messageText,
+        messageText: req.body.mensaje,
       };
       const usuarioLogueado = req.userId;
       const post = await Mensajes.createPostInChatRoom(salaId, messagePayload, usuarioLogueado);
@@ -79,7 +79,7 @@ exports.getConversationByRoomId = async (req, res) => {
           message: 'No existe una sala con este id',
         })
       }
-      const users = await Usuarios.getUserByIds(sala.userIds);
+      const users = await Usuarios.getUserByIds(sala.hablando);
       const opciones = {
         page: parseInt(req.query.page) || 0,
         limit: parseInt(req.query.limit) || 10,

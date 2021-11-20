@@ -9,9 +9,11 @@
         <div class="left-panel">
             <ul>
                 <li
-                    v-for="user in users"
-                    :key="user.userID"
-                />
+                    v-for="(user, index) in users"
+                    :key="index"
+                >
+                    <strong> {{user.username}} </strong>
+                </li>
             </ul>
         </div>
         <message-panel
@@ -30,6 +32,7 @@
 import ChatService from "../services/chat.service";
 import socket from "../socket.js";
 import MessagePanel from "../components/MessagePanel.vue";
+import MensajeService from '../services/mensaje.service';
 
 export default {
     name: "chat",
@@ -55,6 +58,15 @@ export default {
                 socket.emit("enviarMensaje", {
                 mensaje: content,
                 sala: this.salaId,
+                });
+                MensajeService.introducirMensaje()
+                .then(response => { 
+                    if (response.success) {
+                        console.log("mensaje guardado");
+                    }
+                    else{
+                        console.log("error en el servidor, mensaje no guardado");
+                    }
                 });
             }
         },
