@@ -63,8 +63,10 @@ const comprobarPeticionExistente = (req, res, next) => {
 
 const verificarContactos = {
     comprobarPeticionExistente,
+
     comprobarContactoAgregado,
     comprobarExisteUsuario
+
 };
 
 module.exports = verificarContactos;
