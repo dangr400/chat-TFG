@@ -4,6 +4,7 @@ import authHeader from './auth-header';
 const API_URL = '/usuarios/';
 
 class UserService {
+  // GESTIONES CONTACTOS
   getContactos() {
     return axios.get(API_URL + 'contactos' , { headers: authHeader() });
   }
@@ -16,6 +17,7 @@ class UserService {
     return axios.get(API_URL + `contactos/${nombre}` , {headers: authHeader() });
   }
 
+  // GESTIONES PETICIONES DE CONTACTO
   getPeticionesEnviadas() {
     return axios.get(API_URL + 'verMisPeticiones' , { headers: authHeader() });
   }
@@ -35,9 +37,14 @@ class UserService {
   cancelarPeticion(peticion) {
     return axios.delete(API_URL + 'cancelarPeticion', { headers: authHeader() , data: {peticion} });
   }
+  // REFERENTES AL USUARIO
+
+  getUsuarioPorId(idUsuario) {
+    return axios.get(API_URL, { headers: authHeader() , data: idUsuario}); 
+  }
 
   getUsuario() {
-    return axios.get(API_URL + '/', { headers: authHeader() });
+    return axios.get(API_URL + 'yo', { headers: authHeader() });
   }
 
   getModeratorBoard() {
