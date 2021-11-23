@@ -27,4 +27,8 @@ module.exports = function(app) {
     app.get("/api/grupos/gruposPublicos", controller.gruposPublicos);
 
     app.get("/api/grupos/:id", [authJwt.verifyToken], controller.getGrupoPorId);
+
+    app.put("/api/grupos/:id/addModeradores", [authJwt.verifyToken], controller.addModeradores);
+
+    app.put("/api/grupos/:id/addIntegrantes", [authJwt.verifyToken], controller.addIntegrantes);
 };
