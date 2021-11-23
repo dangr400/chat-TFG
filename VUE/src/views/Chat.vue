@@ -50,6 +50,16 @@ export default {
         MessagePanel
     },
     methods: {
+        getSala(idSala) {
+            ChatService.getConversacion(idSala)
+            .then(response => {
+                console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+                this.$route.go(-1);
+            })
+        },
         onMessage(content) {
             if (typeof content == "string") {
                 socket.emit("enviarMensaje", {
@@ -58,16 +68,21 @@ export default {
                 });
             }
         },
+        actualizarChat() {
+            ChatService.getConversacion(this.salaId)
+            .then(response => {
+                this.users = response.data.users;
+                this.mensajes.push(response.data.conversation);
+            });
+        }
     },
+
     mounted() {
         socket.connect();
         socket.emit('join', {sala: this.salaId, usuarioId: this.$store.state.auth.user});
         socket.emit('identity', this.$store.state.auth.user);
-        ChatService.getConversacion(this.salaId)
-        .then(response => {
-            this.users = response.data.users;
-            this.mensajes.push(response.data.conversation);
-        });
+        this.actualizarChat();
+        this.getSala(this.salaId);
         socket.on('emitirMensaje', (response) => {
             this.mensajes.push({
                 mensaje: response.mensaje,
@@ -75,6 +90,7 @@ export default {
         });
         
     },
+
     unmounted() {
         socket.emit('salirChat');
         socket.off("connect");
