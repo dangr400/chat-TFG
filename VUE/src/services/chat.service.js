@@ -8,7 +8,7 @@ class ChatService {
         return axios.post(API_URL + 'initiateGrupos', grupo, {headers: authHeader() });
     }
     iniciarChatUsuarios(usuarios){
-        return axios.post(API_URL + 'initiateGrupos', usuarios, {headers: authHeader() });
+        return axios.post(API_URL + 'initiateUsuarios', usuarios, {headers: authHeader() });
     }
     getConversacion(idSala){
         return axios.get(API_URL + idSala, {headers: authHeader()});
