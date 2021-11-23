@@ -104,6 +104,10 @@
             >
             Editar
             </router-link>
+            <br>
+            <button v-if="esCreador" @click="borrarGrupo" class="badge badge-danger">
+              BORRAR GRUPO
+            </button>
         </div>
         <div v-else>
             <br />
@@ -142,8 +146,7 @@ export default {
   data() {
     const schema = yup.object().shape({
       nombre: yup.string().required("Introduzca un nombre para el grupo"),
-
-      
+      visibilidad: yup.string().required("seleccione una de las opciones"),
     });
 
     return {
@@ -153,6 +156,7 @@ export default {
       nombre: "",
       integrantes: [],
       tienePermisos: false,
+      esCreador: false,
       schema,
       nuevoGrupo: {
         nombre: "",
@@ -199,15 +203,26 @@ export default {
     },
 
     permisosGrupo() {
-        console.log(this.currentGrupo._id);
         GruposService.permisosGrupo(this.currentGrupo._id)
         .then(response => {
-            console.log(response.data);
-            this.tienePermisos = response.data.success;
+          console.log(response);
+            this.tienePermisos = response.data.esModerador;
+            this.esCreador = response.data.esCreador;
         })
         .catch(e => {
           console.log(e);
         });
+    },
+
+    borrarGrupo() {
+      GruposService.borrarGrupo(this.currentGrupo)
+      .then(response => {
+        console.log(response);
+        this.$router.go(0);
+      })
+      .catch(e => {
+        console.log(e);
+      });
     },
 
     removeAllGrupos() {

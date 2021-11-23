@@ -4,7 +4,7 @@ const User = db.usuario;
 const Grupos = db.grupos;
 const Peticion = db.peticion;
 
-exports.getUsuario = (req, res) => {
+exports.getYo = (req, res) => {
   
   User.findById(req.userId)
   .exec((err, user) => {
@@ -17,6 +17,22 @@ exports.getUsuario = (req, res) => {
     }
     res.status(200).json({success: true, user});
   })
+}
+
+exports.getUsuario = (req, res) => {
+  // Preformatear la entrada
+
+  const idUsuario = req.body.usuario.id;
+  User.getUserByIds(idUsuario)
+  .exec((err, usuarios) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send({message: "error en el servidor"});
+    }
+    if (usuarios) {
+      res.status(200).send({ success: true, usuarios});
+    }
+  });
 }
 
 exports.getContactos = (req, res) => {

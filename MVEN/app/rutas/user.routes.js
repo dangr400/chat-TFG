@@ -10,7 +10,9 @@ module.exports = function(app) {
     next();
   });
   
-  app.get("/usuarios", [authJwt.verifyToken], controller.getUsuario);
+  app.get("/usuarios/yo", [authJwt.verifyToken], controller.getYo);
+
+  app.get("/usuarios", [authJwt.verifyToken], controller.getUsuario)
 
   app.get("/usuarios/contactos", [authJwt.verifyToken], controller.getContactos);
 

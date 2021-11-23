@@ -23,6 +23,18 @@ class GruposService {
   nuevoGrupo(grupo) {
     return axios.post(API_URL + 'nuevoGrupo', grupo, { headers: authHeader() });
   }
+
+  añadirModeradores(grupoId, listaMods) {
+    return axios.put(API_URL + grupoId + '/addModeradores', listaMods, { headers: authHeader() });
+  }
+
+  añadirIntegrantes(grupoId, listaContactos) {
+    return axios.put(API_URL + grupoId + '/addIntegrantes', listaContactos, { headers: authHeader() });
+  }
+
+  borrarGrupo(grupo) {
+    return axios.delete(API_URL + 'borrarGrupo', { headers: authHeader(), data: grupo });
+  }
 }
 
 export default new GruposService();
