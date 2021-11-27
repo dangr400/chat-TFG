@@ -30,22 +30,30 @@ exports.initiateUsuarios = async (req, res) => {
 
 exports.postMessage = async (req, res) => {
     try {
-      const { salaId } = req.params;
+      const salaId = req.params.roomId;
       const validacion = makeValidation(types => ({
         payload: req.body,
         checks: {
-          messageText: { type: types.string },
+          contenido: { type: types.string },
         }
       }));
       if (!validacion.success) return res.status(400).json({ ...validacion });
   
       const messagePayload = {
-        messageText: req.body.mensaje,
+        contenido: req.body.contenido,
+        type: "text"
       };
-      const usuarioLogueado = req.userId;
-      const post = await Mensajes.createPostInChatRoom(salaId, messagePayload, usuarioLogueado);
-      global.io.sockets.in(salaId).emit('new message', { message: post });
-      return res.status(200).json({ success: true, post });
+
+      const sala = await Salas.getChatRoomByRoomId(salaId);
+
+      const usuarioLogueado = req.userId;   
+      const post = await Mensajes.createPostInChatRoom(sala, messagePayload, usuarioLogueado);
+      if (post) {
+        return res.status(200).json({ success: true, post });
+      }
+      else {
+        throw "mensaje no guardado";
+      }
     } catch (error) {
       return res.status(500).json({ success: false, error: error })
     }
@@ -85,6 +93,7 @@ exports.getConversationByRoomId = async (req, res) => {
         limit: parseInt(req.query.limit) || 10,
       };
       const conversation = await Mensajes.getConversationByRoomId(salaId, opciones);
+      console.log(conversation);
       return res.status(200).json({
         success: true,
         conversation,
@@ -113,4 +122,46 @@ exports.markConversationReadByRoomId = async (req, res) => {
       console.log(error);
       return res.status(500).json({ success: false, error });
     }
-  };
+};
+
+exports.entrarConversacion = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const sala = await Salas.getChatRoomByRoomId(roomId)
+    if (!sala) {
+      return res.status(400).json({
+        success: false,
+        message: 'No room exists for this id',
+      })
+    }
+
+    const currentLoggedUser = req.userId;
+    const result = await Salas.addHablante(roomId, currentLoggedUser);
+    return res.status(200).json({ success: true, data: result });
+
+  } catch(error) {
+    console.log(error);
+    return res.status(500).json({ success: false, error});
+  }
+};
+
+exports.salirConversacion = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const sala = await Salas.getChatRoomByRoomId(roomId)
+    if (!sala) {
+      return res.status(400).json({
+        success: false,
+        message: 'No room exists for this id',
+      })
+    }
+
+    const currentLoggedUser = req.userId;
+    const result = await Salas.salirHablante(roomId, currentLoggedUser);
+    return res.status(200).json({ success: true, data: result });
+
+  } catch(error) {
+    console.log(error);
+    return res.status(500).json({ success: false, error});
+  }
+};

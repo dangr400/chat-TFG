@@ -19,6 +19,8 @@ SalasSchema.statics.iniciarChatGrupo = async function (grupo, iniciador) {
         grupoId: grupo
         });
         if (SalaDisponible) {
+            SalaDisponible._doc.hablando.push(iniciador);
+            SalaDisponible.save();
             return {
                 isNew: false,
                 message: 'retornando una sala de chat antigua',
@@ -76,6 +78,45 @@ SalasSchema.statics.iniciarChatUsuarios = async function (usuarios) {
     }
 };
 
+SalasSchema.statics.addHablante = async function (salaId, usuarioId) {
+    try {
+        const sala = await this.findById(salaId);
+        if (sala) {
+            sala._doc.hablando.push(usuarioId);
+            sala.save();
+            return sala;
+        }
+        else {
+            console.log("no se encontró la sala");
+        }
+    } catch( error ) {
+        console.log(error);
+    }
+};
+
+SalasSchema.statics.salirHablante = async function (salaId, usuarioId) {
+    try {
+        const sala = await this.findById(salaId);
+        if (sala) {
+            const indexUsuario = sala._doc.hablando.indexOf(usuarioId);
+            if (indexUsuario > -1) {
+                sala._doc.hablando.splice(indexUsuario, 1);
+            }
+            else {
+                console.log("usuario no registrado en la sala");
+                
+            }
+            sala.save();
+            return sala;
+        }
+        else {
+            console.log("no se encontró la sala");
+        }
+    } catch( error ) {
+        console.log(error);
+    }
+};
+
 SalasSchema.statics.getChatRoomByRoomId = async function (salaId) {
     try {
       const room = await this.findOne({ _id: salaId });
@@ -84,7 +125,7 @@ SalasSchema.statics.getChatRoomByRoomId = async function (salaId) {
       console.log("NO SE PUDO ENCONTRAR SALA: ERROR EN MODEL");
       throw error;
     }
-  }
+};
 
 const Salas = mongoose.model('Salas', SalasSchema);
 

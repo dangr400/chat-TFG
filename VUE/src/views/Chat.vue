@@ -7,6 +7,7 @@
     </header>
     <div>
         <div class="left-panel">
+            <h3>Conectados:</h3>
             <ul>
                 <li
                     v-for="(user, index) in users"
@@ -57,21 +58,31 @@ export default {
             ChatService.getConversacion(idSala)
             .then(response => {
                 console.log(response);
+                this.users = response.data.users;
+                // formateado de mensajes
+                response.data.conversation.forEach(element => {
+                    const msg = {
+                        emisor: element.origen.username,
+                        mensaje: element.contenido,    
+                    }
+                    this.mensajes.push(msg);
+                });
             })
             .catch(error => {
                 console.log(error);
-                this.$route.go(-1);
+                //this.$router.go(-1);
             })
         },
         onMessage(content) {
             if (typeof content == "string") {
+                const mensaje = {contenido: content}
                 socket.emit("enviarMensaje", {
                 mensaje: content,
                 sala: this.salaId,
                 });
-                MensajeService.introducirMensaje()
+                MensajeService.introducirMensaje(this.salaId, mensaje)
                 .then(response => { 
-                    if (response.success) {
+                    if (response.data.success) {
                         console.log("mensaje guardado");
                     }
                     else{
@@ -80,11 +91,10 @@ export default {
                 });
             }
         },
-        actualizarChat() {
+        actualizarUsuarios() {
             ChatService.getConversacion(this.salaId)
             .then(response => {
                 this.users = response.data.users;
-                this.mensajes.push(response.data.conversation);
             });
         }
     },
@@ -93,17 +103,18 @@ export default {
         socket.connect();
         socket.emit('join', {sala: this.salaId, usuarioId: this.$store.state.auth.user});
         socket.emit('identity', this.$store.state.auth.user);
-        this.actualizarChat();
         this.getSala(this.salaId);
         socket.on('emitirMensaje', (response) => {
             this.mensajes.push({
                 mensaje: response.mensaje,
                 emisor: response.emisor});
         });
+        this.actualizarUsuarios();
         
     },
 
     unmounted() {
+        ChatService.salirConversacion(this.salaId);
         socket.emit('salirChat');
         socket.off("connect");
         socket.off("disconnect");
@@ -114,10 +125,10 @@ export default {
 <style>
     .left-panel {
         float: left;
-        width: 10%;
+        width: 23%;
         height: 100%;
-        overflow-x: hidden;
-        background-color: #3a3d3b;
+        overflow-x: visible;
+        background-color: #3e636d;
         color: white;
     }
     .right-panel {
