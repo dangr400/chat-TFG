@@ -17,9 +17,9 @@ exports.initiateGrupos = async (req, res) => {
 
 exports.initiateUsuarios = async (req, res) => {
   try {
-    const { hablando } = req.body;
+    const receptor = req.body._id;
     const iniciadorChat = req.userId;
-    const allUserIds = [...hablando, iniciadorChat];
+    const allUserIds = [receptor, iniciadorChat];
     const chatRoom = await Salas.iniciarChatUsuarios(allUserIds);
     return res.status(200).json({ success: true, chatRoom });
   } catch (error) {
@@ -44,15 +44,19 @@ exports.postMessage = async (req, res) => {
         type: "text"
       };
 
-      const sala = await Salas.getChatRoomByRoomId(salaId);
-
-      const usuarioLogueado = req.userId;   
-      const post = await Mensajes.createPostInChatRoom(sala, messagePayload, usuarioLogueado);
-      if (post) {
-        return res.status(200).json({ success: true, post });
+      const emisor = req.userId;
+      const permisosMsgs = await Usuarios.permanenciaMsgs(emisor) 
+      if (permisosMsgs){
+        const post = await Mensajes.createPostInChatRoom(salaId, messagePayload, emisor);
+        if (post) {
+          return res.status(200).json({ success: true, post });
+        }
+        else {
+          return res.status(500).json({ success: false, message: "error al guardar el mensaje"});
+        }
       }
       else {
-        throw "mensaje no guardado";
+        return res.status(200).json({success: true, message: "mensaje no guardado"});
       }
     } catch (error) {
       return res.status(500).json({ success: false, error: error })

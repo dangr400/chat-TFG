@@ -61,7 +61,7 @@
     try {
       const post = await this.create({
         origen: origen,
-        salaId: sala._id,
+        salaId: salaId,
         contenido: mensaje.contenido,
         tipo: mensaje.type, 
         leidoPor: { leidoPorUsuarioId: origen }

@@ -5,4 +5,6 @@ node_modules
 package-lock.json
 node_modules
 MVEN/node_modules
+MVEN/package-lock.json
 VUE/node_modules
+VUE/package-lock.json

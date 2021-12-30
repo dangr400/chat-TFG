@@ -52,7 +52,7 @@
       </ul>
     </div>
     <div v-else>
-      <chat v-if="enChat" v-bind:grupo="currentGrupo" v-bind:usuario="currentContacto"></chat>
+      <chat v-bind:grupo="currentGrupo" v-bind:usuario="currentContacto"></chat>
     </div>
     
   </div>
@@ -129,33 +129,29 @@ export default {
         },
 
         iniciarChatGrupo(grupo) {
-            console.log(grupo);
-            ChatService.iniciarChatGrupo(grupo)
-            .then(response => {
-                console.log(response);
-                const idSala = response.data.chatRoom.chatRoomId;
-                this.$router.push({path: `/chat/${idSala}`})
-                })
-                .catch(e => {
-                console.log(e);
-                });
+          console.log(grupo);
+          ChatService.iniciarChatGrupo(grupo)
+          .then(response => {
+            console.log(response);
+            const idSala = response.data.chatRoom.chatRoomId;
+            this.$router.push({path: `/chat/${idSala}`})
+            })
+          .catch(e => {
+            console.log(e);
+          });
         },
 
         iniciarChatUsuario(usuario) {
-            console.log(usuario);
-            const usuariosChat = {
-              usuario1: {id : usuario._id, nombre: usuario.username},
-              usuario2: {id : this.$store.state.auth.user.id, nombre: this.$store.state.auth.user.username},
-            }
-            ChatService.iniciarChatUsuarios(usuariosChat)
-            .then(response => {
-                console.log(response);
-                const idSala = response.data.chatRoom.chatRoomId;
-                this.$router.push({path: `/chat/${idSala}`})
-                })
-                .catch(e => {
-                console.log(e);
-                });
+          console.log(usuario);
+          ChatService.iniciarChatUsuarios(usuario)
+          .then(response => {
+            console.log(response);
+            const idSala = response.data.chatRoom.chatRoomId;
+            this.$router.push({path: `/chat/${idSala}`})
+            })
+          .catch(e => {
+            console.log(e);
+          });
         },
     },
     mounted() {
