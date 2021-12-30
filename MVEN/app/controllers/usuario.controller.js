@@ -4,7 +4,7 @@ const User = db.usuario;
 const Grupos = db.grupos;
 const Peticion = db.peticion;
 
-exports.getUsuario = (req, res) => {
+exports.getYo = (req, res) => {
   
   User.findById(req.userId)
   .exec((err, user) => {
@@ -17,6 +17,22 @@ exports.getUsuario = (req, res) => {
     }
     res.status(200).json({success: true, user});
   })
+}
+
+exports.getUsuario = (req, res) => {
+  // Preformatear la entrada
+
+  const idUsuario = req.body.usuario.id;
+  User.getUserByIds(idUsuario)
+  .exec((err, usuarios) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send({message: "error en el servidor"});
+    }
+    if (usuarios) {
+      res.status(200).send({ success: true, usuarios});
+    }
+  });
 }
 
 exports.getContactos = (req, res) => {
@@ -36,9 +52,9 @@ exports.getContactos = (req, res) => {
       res.status(200).json({success: true, contactos});
     });
 }
-/*  TODO: AÑADIR METODO PARA ELIMINAR CONTACTO
+
 exports.eliminarContacto = (req, res) => {
-  User.findById(req.userId)
+  User.findById(req.userId, 'contactos')
   .exec((err, contact) => {
     if (err) {
       console.log(err);
@@ -47,12 +63,22 @@ exports.eliminarContacto = (req, res) => {
     if (!contact){
       return res.status(404).send({ message: "No hay contactos añadidos." });
     }
-    var contactosActualizado = contact.contactos.filter(function(value, index, arr){ 
-      return value !== req.body._id;
+    var contactosActualizado = contact.filter(function(value, index, arr){ 
+      return value._id !== req.body._id;
+    });
+    User.findByIdAndUpdate(req.userId,{contactos: contactosActualizado})
+    .exec((err, actualizacion) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send({message: "error en el servidor"});
+      }
+      if (actualizacion){
+        return res.status(200).send({ message: "Contacto eliminado" });
+      }
     });
   })
 }
-*/
+
 exports.getContactosNombre = (req, res) => {
   const nombre = req.params.nombre;
   User.findById(req.userId, 'contactos')
@@ -77,19 +103,26 @@ exports.getContactosNombre = (req, res) => {
 }
 
 exports.enviarPeticionContacto = (req, res) => {
-  const nuevaPeticion = new Peticion({
-    idEmisor: req.userId,
-    idReceptor: req.body.contactoId,
-    estado: "PENDIENTE",
-    fecha: new Date(),
-  })
-  nuevaPeticion.save((err) => {
-    if (err) {
+    User.getUserIdByName(req.body.nombre)
+    .then(usuarioId => {
+      const nuevaPeticion = new Peticion({
+        idEmisor: req.userId,
+        idReceptor: usuarioId,
+        estado: "PENDIENTE",
+        fecha: new Date(),
+      });
+
+      nuevaPeticion.save((err, peticion) => {
+        if (err) {
+          res.status(500).send({ success: false, message: err});
+          return;
+        }
+        res.status(200).send({ success: true, message: "Peticion Enviada"});
+      });
+
+    }).catch(err => {
       res.status(500).send({ message: err});
-      return;
-    }
-    res.status(200).send({ message: "Peticion Enviada"});
-  })
+    })
 }
 
 exports.aceptarPeticion = (req, res) => {
@@ -103,10 +136,10 @@ exports.aceptarPeticion = (req, res) => {
     usuario1.save();
     usuario2.save();
     peticion.delete();
-    res.status(200).send({message: "Contacto añadido"});
+    res.status(200).send({ success: true, message: "Contacto añadido"});
   }).catch((error) => {
     console.log(error);
-    res.status(500).send({message: "Hubo un error en el proceso"});
+    res.status(500).send({ success: false, message: "Hubo un error en el proceso"});
     return;
   });
 }
@@ -115,10 +148,10 @@ exports.cancelarPeticion =(req, res) => {
   Peticion.findByIdAndDelete(req.body.peticion._id)
   .exec((err) => {
     if (err) {
-      res.status(500).send({ message: err});
+      res.status(500).send({ success: true, message: err});
       return;
     }
-    res.status(200).send({ message: "peticion cancelada"});
+    res.status(200).send({ success: true, message: "peticion cancelada"});
   })
 
 }

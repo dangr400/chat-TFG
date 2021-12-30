@@ -4,12 +4,13 @@ const Usuario = db.usuario;
 const Mensaje = db.mensajeGrupo;
 
 exports.crearGrupo = (req, res) => {
+    const visibilidad = req.body.visibilidad ? true : false;
     const grupo = new Grupo({
         nombre: req.body.nombre,
         creador: req.userId,
         moderadores: [],
         integrantes: [req.userId],
-        publico: req.body.publico
+        publico: visibilidad
       });
 
     grupo.save((err) => {
@@ -18,19 +19,57 @@ exports.crearGrupo = (req, res) => {
           return;
         }
         res.send({ message: "Grupo creado!" });
+        return;
     });
 };
 
+exports.getGrupoPorId = (req, res) => {
+  Grupo.findById(req.params.id)
+  .populate("creador", "username")
+  .populate("moderadores", "username")
+  .populate("integrantes", "username")
+  .exec((err, grupo) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send({success: false, message: "error en el servidor"});
+      return;
+    }
+    if (!grupo){
+      res.status(404).send({success: false, grupo, message: "no existe el grupo"});
+      return;
+    }
+    res.status(200).send({success: true, grupo});
+    return;
+  })
+}
+
 exports.permisosGrupo = (req, res) => {
-  Grupo.find({_id: req.params.grupoId , $or:[{creador: req.userId},{moderadores: req.userId}]})
+  Grupo.find({_id: req.params.grupoId , creador: req.userId})
   .exec((err, grupo) => {
     if (err) {
       res.status(404).send({success: false})
+      return;
     }
-    if (!grupo){
-      res.status(200).send({success: false})
+    if (grupo){
+      res.status(200).send({success: true , esCreador: true , esModerador: true})
+      return;
     }
-    res.status(200).send({success: true, grupo});
+    else{
+      Grupo.find({_id: req.params.grupoId, moderador: req.userId })
+      .exec(
+        (err, grupo) => {
+          if (err) {
+            res.status(404).send({success: false})
+            return;
+          }
+          if (grupo){
+            res.status(200).send({success: true , esCreador: false , esModerador: true})
+            return;
+          }
+            res.status(404).send({success: false, esCreador: false, esModerador: false})
+        })
+    }
+    
   })
 }
 
@@ -47,6 +86,7 @@ exports.nuevoMensaje = (req, res) => {
       return;
     }
     res.status(200).send({ message: "ok"});
+    return;
   })
 };
 
@@ -58,18 +98,19 @@ exports.verMensajes = (req, res) => {
       return;
     }
     res.status(200).send(msgs);
+    return;
   })
 };
 
 exports.eliminarGrupo = (req, res) => {
   Grupo.findByIdAndDelete(req.body.grupoId)
-  .exec((err, exito) => {
+  .exec((err) => {
     if (err) {
       res.status(500).send({ message: err});
       return;
     }
-    console.log(exito);
     res.status(200).send({ message: "grupo eliminado"});
+    return;
   });
 };
 
@@ -81,12 +122,13 @@ exports.misGrupos = (req, res) => {
       return;
     }
     res.status(200).send(grupos);
+    return;
   })
 };
 
 exports.integranteEnGrupos = (req, res) => {
   Grupo.find({integrantes: req.userId})
-  .populate("integrantes", "username")
+  .populate("integrantes")
   .exec((err, grupos) => {
     if (err) {
       console.log(err);
@@ -94,6 +136,7 @@ exports.integranteEnGrupos = (req, res) => {
       return;
     }
     res.status(200).send(grupos);
+    return;
   });
 };
 
@@ -105,6 +148,7 @@ exports.moderadorEnGrupos = (req, res) => {
       return;
     }
     res.status(200).send(grupos);
+    return;
   });
 };
 
@@ -116,6 +160,7 @@ exports.gruposPublicos = (req, res) => {
       return;
     }
     res.status(200).send(grupos);
+    return;
   });
 };
 
@@ -141,6 +186,59 @@ exports.agregarUsuario = (req, res) => {
         }
         grupo.integrantes.push(user._id);
         grupo.save();
+        return;
       })
     });
 };
+
+exports.addIntegrantes = (req, res) => {
+  Grupo.findById(req.params.id)
+  .exec((err, grupo) => {
+    if (err) {
+      res.status(500).send({ message: err });
+    return;
+    }
+    if (!grupo) {
+      return res.status(404).send({ message: "Grupo no encontrado." });
+    }
+    // Se filtran los usuarios que ya son integrantes para evitar duplicados
+    const integrantesFiltrado = [];
+    req.body.forEach(elemento => {
+      if (!grupo.integrantes.includes(elemento)){
+        integrantesFiltrado.push(elemento);
+      }
+    });
+    console.log("Original: " + req.body)
+    console.log("Filtrado: " + integrantesFiltrado)
+    grupo.integrantes = grupo.integrantes.concat(integrantesFiltrado)
+    grupo.save();
+    
+    return res.status(200).send({ message: "Moderadores añadidos" });
+  })
+}
+
+exports.addModeradores = (req, res) => {
+  Grupo.findById(req.params.id)
+  .exec((err, grupo) => {
+    if (err) {
+      res.status(500).send({ message: err });
+    return;
+    }
+    if (!grupo) {
+      return res.status(404).send({ message: "Grupo no encontrado." });
+    }
+    // Se filtran los usuarios que ya estan integrados para evitar duplicados
+    const integrantesFiltrado = [];
+    req.body.forEach(elemento => {
+      if (!grupo.integrantes.includes(elemento)){
+        integrantesFiltrado.push(elemento);
+      }
+    });
+    console.log("Original: " + req.body)
+    console.log("Filtrado: " + integrantesFiltrado)
+    grupo.integrantes = grupo.integrantes.concat(integrantesFiltrado)
+    grupo.save();
+    
+    return res.status(200).send({ message: "Integrantes añadidos" });
+  })
+}

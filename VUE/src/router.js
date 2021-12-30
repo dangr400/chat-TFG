@@ -37,6 +37,11 @@ const routes = [
     component: () => import("./views/Chat.vue")
   },
   {
+    path: "/grupos/:id",
+    name: "grupo-detalles",
+    component: () => import("./views/Grupo.vue")
+  },
+  {
     path: "/grupos/nuevo",
     component: () => import("./components/NuevoGrupo")
   },

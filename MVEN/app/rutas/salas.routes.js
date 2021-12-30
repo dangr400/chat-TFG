@@ -12,10 +12,12 @@ module.exports = function(app){
 
 
     //app.get('/chat/', [authJwt.verifyToken], controller.getRecentConversation);
-    app.get('/chat/:roomId', [authJwt.verifyToken], controller.getConversationByRoomId);
     app.post('/chat/initiateGrupos', [authJwt.verifyToken], controller.initiateGrupos);
     app.post('/chat/initiateUsuarios', [authJwt.verifyToken], controller.initiateUsuarios);
-    app.post('/chat/:roomId/message', [authJwt.verifyToken], controller.postMessage);
+    app.post('/chat/:roomId/mensaje', [authJwt.verifyToken], controller.postMessage);
     app.put('/chat/:roomId/mark-read', [authJwt.verifyToken], controller.markConversationReadByRoomId);
+    app.get('/chat/:roomId', [authJwt.verifyToken], controller.getConversationByRoomId);
+    app.get('/chat/:roomId/entrar', [authJwt.verifyToken], controller.entrarConversacion);
+    app.get('/chat/:roomId/salir', [authJwt.verifyToken], controller.salirConversacion);
 }
 

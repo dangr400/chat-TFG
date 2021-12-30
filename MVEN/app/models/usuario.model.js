@@ -37,5 +37,26 @@ UsuarioSchema.statics.getUserByIds = async function (ids) {
   }
 }
 
+UsuarioSchema.statics.getUserIdByName = async function (nombre) {
+  try {
+    const usuario = await this.findOne({ username: nombre });
+    return usuario._id;
+  } catch (error) {
+    console.log("Error buscando usuario:\n" + error);
+    throw error;
+  }
+  
+}
+
+UsuarioSchema.statics.permanenciaMsgs = async function (id) {
+  try {
+    const usuario = await this.findById(id, 'configuracion');
+    return usuario.configuracion.persistencia_msgs;
+  } catch(error) {
+    console.log("Error recuperando permisos de usuario:\n" + error);
+    throw error;
+  }
+}
+
 const Usuario = mongoose.model("usuarios", UsuarioSchema);
 module.exports = Usuario;

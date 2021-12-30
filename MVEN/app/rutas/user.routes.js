@@ -10,16 +10,17 @@ module.exports = function(app) {
     next();
   });
   
-  app.get("/usuarios", [authJwt.verifyToken], controller.getUsuario);
+  app.get("/usuarios/yo", [authJwt.verifyToken], controller.getYo);
+
+  app.get("/usuarios", [authJwt.verifyToken], controller.getUsuario)
 
   app.get("/usuarios/contactos", [authJwt.verifyToken], controller.getContactos);
 
   app.get("/usuarios/contactos/:nombre", [authJwt.verifyToken], controller.getContactosNombre);
 
-  /* TODO: FINALIZAR METODO PARA ELIMINAR CONTACTO */
-  //app.delete("/usuarios/contactos/eliminarContacto", [authJwt.verifyToken], controller.eliminarContacto);
+  app.delete("/usuarios/contactos/eliminarContacto", [authJwt.verifyToken], controller.eliminarContacto);
 
-  app.post("/usuarios/enviarPeticion", [authJwt.verifyToken], [verificarContactos.comprobarContactoAgregado], [verificarContactos.comprobarPeticionExistente],  controller.enviarPeticionContacto);
+  app.post("/usuarios/enviarPeticion", [authJwt.verifyToken], [verificarContactos.comprobarExisteUsuario],[verificarContactos.comprobarContactoAgregado], [verificarContactos.comprobarPeticionExistente],  controller.enviarPeticionContacto);
 
   app.post("/usuarios/aceptarPeticion", [authJwt.verifyToken], controller.aceptarPeticion);
 

@@ -6,9 +6,17 @@
         :key="index"
         class="message"
       >
-        <strong class="message">{{ message.emisor }}</strong>
-        <br>
-        <span class="message">{{ message.mensaje }}</span>
+        <div v-if="message.emisor === usuarioLogueado" class="message propio">
+          <strong  class="message">Yo</strong>
+          <br>
+          <span class="message">{{ message.mensaje }}</span>
+        </div>
+        <div v-else class="message integrante">
+          <strong class="message">{{ message.emisor }}</strong>
+          <br>
+          <span class="message">{{ message.mensaje }}</span>
+        </div>
+        
       </li>
     </ul>
 
@@ -36,20 +44,17 @@ export default {
       this.$emit("input", this.input);
       this.input = "";
     },
-    displaySender(message, index) {
-      return (
-        index === 0 ||
-        this.sala.messages[index - 1].fromSelf !==
-          this.sala.messages[index].fromSelf
-      );
-    },
   },
   computed: {
     isValid() {
       return this.input.length > 0;
     },
+    usuarioLogueado() {
+      return this.$store.state.auth.user.username;
+    },
   },
 };
+
 </script>
 
 <style scoped>
@@ -61,10 +66,19 @@ export default {
 .messages {
   margin: 0;
   padding: 20px;
-  background-color: aliceblue;
+  background-color: #eff7ff;
 }
 .message {
   list-style: none;
+  margin-bottom: 10px;
+}
+.propio {
+  margin-left: 30%;
+  background-color: #cde3f8;
+}
+.integrante {
+  margin-right: 30%;
+  background-color: #9badbd;
 }
 .sender {
   font-weight: bold;

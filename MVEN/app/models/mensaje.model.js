@@ -27,7 +27,7 @@
 
  const opcionesBase = {
      timestamps: true,
-     discriminatorKey: 'tipo',
+     //discriminatorKey: 'tipo',
      collection: "mensajes"
  };
 
@@ -35,33 +35,39 @@
    new mongoose.Schema(
     {
         origen:
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Usuario"
-            },
-        salaID: 
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Sala"
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "usuarios"
         },
-        contenido: mongoose.Schema.Types.Mixed,
+        salaId: 
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "salas"
+        },
+        contenido: String,
         tipo: {
-            type: String,
-            default: () => MESSAGE_TYPES.TYPE_TEXT,
+          type: String,
+          default: () => MESSAGE_TYPES.TYPE_TEXT,
         },
         leidoPor: [leidoPorUsuariosSchema],
     },
-        opcionesBase,
+    { 
+      timestamps: true,
+      collection: "mensajes"
+    },
    );
 
-   MensajeSchema.statics.createPostInChatRoom = async function (salaId, mensaje, origen) {
+   MensajeSchema.statics.createPostInChatRoom = async function (sala, mensaje, origen) {
     try {
       const post = await this.create({
-        salaId,
-        mensaje,
-        origen,
+        origen: origen,
+        salaId: salaId,
+        contenido: mensaje.contenido,
+        tipo: mensaje.type, 
         leidoPor: { leidoPorUsuarioId: origen }
       });
+      post.save();
+      /*
       const aggregate = await this.aggregate([
         // get post where _id = post._id
         { $match: { _id: post._id } },
@@ -115,16 +121,20 @@
           }
         }
       ]);
+      
       return aggregate[0];
+      */
+      return true;
     } catch (error) {
-        console.log("ERROR ENVIANDO MENSAJE");
+        console.log(error);
         throw error;
     }
   }
 
   MensajeSchema.statics.getConversationByRoomId = async function (salaId, opciones = {}) {
     try {
-      return this.aggregate([
+      /*
+      const mensajes = this.aggregate([
         { $match: { salaId } },
         { $sort: { createdAt: -1 } },
         // do a join on another table called usuarios, and 
@@ -138,13 +148,22 @@
           }
         },
         { $unwind: "$origen" },
-        // apply pagination
+         apply pagination
         { $skip: opciones.page * opciones.limit },
         { $limit: opciones.limit },
         { $sort: { createdAt: 1 } },
-      ]);
+        
+      ]);*/
+      const mensajes = await this.find({ salaId: salaId }).populate('origen', 'username');
+      if (!mensajes){
+        console.log("no hay mensajes")
+        return null;
+      }
+      console.log("mensajes recuperados: \n" + mensajes);
+      return mensajes;
+
     } catch (error) {
-        console.log("ERROR RECUPERANDO SALA");
+        console.log(error);
       throw error;
     }
   }
