@@ -1,9 +1,3 @@
-/*
-    Doc: index.js
-    Fecha creación: 02/10/1998
-    Módulo para la conexión con la base de datos,
-     así como para poder acceder a las distintas colecciones
-*/
 /**
  * Módulo para la conexión con la base de datos, así como para poder acceder a las distintas colecciones.
  * 
