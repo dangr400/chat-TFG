@@ -1,8 +1,15 @@
 const db = require("../models");
 const User = db.usuario;
 
+/**
+ * Función para comprobar que el nombre de usuario o el email no están registrados en la aplicación
+ * @param {any} req
+ * @param {any} res
+ * @param {any} next
+ * @returns {any}
+ */
 const checkDuplicateUsernameOrEmail = (req, res, next) => {
-  // Username
+  // Comprobacion de nombre de usuario
   User.findOne({
     username: req.body.username
   }).exec((err, user) => {
@@ -12,11 +19,11 @@ const checkDuplicateUsernameOrEmail = (req, res, next) => {
     }
 
     if (user) {
-      res.status(400).send({ message: "Failed! Username is already in use!" });
+      res.status(400).send({ message: "Nombre de usuario en uso, escoja otro" });
       return;
     }
 
-    // Email
+    // Comprobacion de email
     User.findOne({
       email: req.body.email
     }).exec((err, user) => {
@@ -26,7 +33,7 @@ const checkDuplicateUsernameOrEmail = (req, res, next) => {
       }
 
       if (user) {
-        res.status(400).send({ message: "Failed! Email is already in use!" });
+        res.status(400).send({ message: "Este email ya está registrado en la apliciación" });
         return;
       }
 

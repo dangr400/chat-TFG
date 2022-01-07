@@ -1,3 +1,7 @@
+// Módulo de funciones para verificaciones referentes a los contactos
+// Autor: Daniel Gómez Rodríguez
+// Referencias: Bezkoder
+
 const db = require("../models");
 const Peticion = db.peticion;
 const Usuario = db.usuario;
@@ -36,7 +40,13 @@ const comprobarContactoAgregado = (req, res, next) => {
     });
 };
 
-// Comprueba si la peticion de contacto ya existe
+/**
+ * Función para comprobar si la peticion de contacto ya existe
+ * @param {any} req
+ * @param {any} res
+ * @param {any} next
+ * @returns {any}
+ */
 const comprobarPeticionExistente = (req, res, next) => {
     Usuario.findOne({ username: req.body.nombre})
     .exec((err, usuario) => {

@@ -1,9 +1,20 @@
+// Módulo de funciones para la autenticacion con JWT
+// Autor: Daniel Gómez Rodríguez
+// Referencias: Bezkoder
+
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 /*const db = require("../models");
 const User = db.usuario;
 const Role = db.role;*/
 
+/**
+ * Función para verificar la validez del token enviado por el usuario
+ * @param {any} req
+ * @param {any} res
+ * @param {any} next
+ * @returns {any}
+ */
 const verifyToken = (req, res, next) => {
 
   let token = req.headers["x-access-token"];
