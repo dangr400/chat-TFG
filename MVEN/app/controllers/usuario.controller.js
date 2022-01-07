@@ -1,3 +1,7 @@
+// Módulo de funciones para gestionar las acciones de los usuarios
+// Autor: Daniel Gómez Rodríguez
+// Referencias: Bezkoder
+
 const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.usuario;
@@ -79,6 +83,12 @@ exports.eliminarContacto = (req, res) => {
   })
 }
 
+/**
+ * Función para devolver los contactos, filtrados por un nombre
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.getContactosNombre = (req, res) => {
   const nombre = req.params.nombre;
   User.findById(req.userId, 'contactos')
@@ -102,6 +112,12 @@ exports.getContactosNombre = (req, res) => {
     });
 }
 
+/**
+ * Función para enviar una petición de contacto a otro usuario
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.enviarPeticionContacto = (req, res) => {
     User.getUserIdByName(req.body.nombre)
     .then(usuarioId => {
@@ -125,6 +141,12 @@ exports.enviarPeticionContacto = (req, res) => {
     })
 }
 
+/**
+ * Función para aceptar una petición de contacto
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.aceptarPeticion = (req, res) => {
   Promise.all([
     Peticion.findById(req.body._id),
@@ -144,6 +166,12 @@ exports.aceptarPeticion = (req, res) => {
   });
 }
 
+/**
+ * Función para rechazar una petición de contacto
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.cancelarPeticion =(req, res) => {
   Peticion.findByIdAndDelete(req.body.peticion._id)
   .exec((err) => {
@@ -156,6 +184,12 @@ exports.cancelarPeticion =(req, res) => {
 
 }
 
+/**
+ * Función para ver las peticiones de contacto enviadas
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.verMisPeticiones = (req, res) => {
   Peticion.find({idEmisor: req.userId})
   .populate("idReceptor")
@@ -168,6 +202,12 @@ exports.verMisPeticiones = (req, res) => {
   })
 }
 
+/**
+ * Función para ver las peticiones de contacto recibidas
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.verPeticionesPendientes = (req, res) => {
   Peticion.find({idReceptor: req.userId})
   .populate("idEmisor", "username")
@@ -181,6 +221,12 @@ exports.verPeticionesPendientes = (req, res) => {
   })
 }
 
+/**
+ * Función para ver los grupos creados por el usuario
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.misGrupos = (req, res) => {
   Grupos.find({creador: req.userId})
   .exec((err, grupos) => {
@@ -192,6 +238,12 @@ exports.misGrupos = (req, res) => {
   });
 }
 
+/**
+ * Funcion para eliminar un usuario de la aplicación
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.eliminarUsuario = (req, res) => {
   User.findByIdAndDelete(req.userId)
   .exec((err, exito) =>{

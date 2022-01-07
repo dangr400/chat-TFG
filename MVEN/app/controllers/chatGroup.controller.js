@@ -1,8 +1,18 @@
+// Módulo de funciones específico para grupos de chat
+// Autor: Daniel Gómez Rodríguez
+// Referencias: Bezkoder
 const db = require("../models");
 const Grupo = db.grupos;
 const Usuario = db.usuario;
 const Mensaje = db.mensajeGrupo;
 
+/**
+ * Método para crear un nuevo grupo.
+ * Recibe el nombre del grupo, usuario creador y tipo de grupo (público o privado)
+ * @param {any} req Petición recibida por la API
+ * @param {any} res Respuesta ofrecida por la API
+ * @returns {any}
+ */
 exports.crearGrupo = (req, res) => {
     const visibilidad = req.body.visibilidad ? true : false;
     const grupo = new Grupo({
@@ -73,6 +83,12 @@ exports.permisosGrupo = (req, res) => {
   })
 }
 
+/**
+ * Método para grabar un mensaje en la base de datos
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.nuevoMensaje = (req, res) => {
   const mensaje = new Mensaje({
     origen: req.userId,
@@ -85,11 +101,16 @@ exports.nuevoMensaje = (req, res) => {
       res.status(500).send({ message: err});
       return;
     }
-    res.status(200).send({ message: "ok"});
-    return;
+    res.status(200).send({ message: "Mensaje Guardado"});
   })
 };
 
+/**
+ * Método para ver los mensajes (guardados en la base de datos) de un grupo
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.verMensajes = (req, res) => {
   Mensaje.find({destino: req.body.grupoId})
   .exec((err, msgs) => {
@@ -102,6 +123,12 @@ exports.verMensajes = (req, res) => {
   })
 };
 
+/**
+ * Método para eliminar un grupo
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.eliminarGrupo = (req, res) => {
   Grupo.findByIdAndDelete(req.body.grupoId)
   .exec((err) => {
@@ -114,6 +141,12 @@ exports.eliminarGrupo = (req, res) => {
   });
 };
 
+/**
+ * Método para ver los grupos creados por el usuario que realiza la petición
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.misGrupos = (req, res) => {
   Grupo.find({creador: req.userId})
   .exec((err, grupos) => {
@@ -126,6 +159,12 @@ exports.misGrupos = (req, res) => {
   })
 };
 
+/**
+ * Método para ver los grupos de los cuales el usuario forma parte
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.integranteEnGrupos = (req, res) => {
   Grupo.find({integrantes: req.userId})
   .populate("integrantes")
@@ -140,6 +179,12 @@ exports.integranteEnGrupos = (req, res) => {
   });
 };
 
+/**
+ * Método para ver los grupos en los que el usuario es moderador
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.moderadorEnGrupos = (req, res) => {
   Grupo.find({moderadores: req.userId})
   .exec((err, grupos) => {
@@ -152,6 +197,12 @@ exports.moderadorEnGrupos = (req, res) => {
   });
 };
 
+/**
+ * Método para visualizar los grupos públicos registrados en la aplicación
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.gruposPublicos = (req, res) => {
   Grupo.find({publico: true})
   .exec((err, grupos) => {
@@ -164,6 +215,12 @@ exports.gruposPublicos = (req, res) => {
   });
 };
 
+/**
+ * Método para agregar a un usuario como integrante de un grupo
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.agregarUsuario = (req, res) => {
     Grupo.findById(req.body.grupoId)
     .exec((err, grupo) => {

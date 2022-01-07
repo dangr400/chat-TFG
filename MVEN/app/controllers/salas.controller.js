@@ -1,8 +1,18 @@
+// Módulo de funciones para las salas donde se establecen las convesaciones
+// Autor: Daniel Gómez Rodríguez
+// Referencias: Bezkoder
+
 const makeValidation = require('@withvoid/make-validation');
 const Salas  = require("../models/salas.model");
 const Mensajes = require("../models/mensaje.model");
 const Usuarios = require("../models/usuario.model");
 
+/**
+ * Función para iniciar una sala de chat para un grupo
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.initiateGrupos = async (req, res) => {
     try {
       const iniciador = req.userId;
@@ -15,6 +25,12 @@ exports.initiateGrupos = async (req, res) => {
     }
 };
 
+/**
+ * Función para iniciar una sala de chat para dos usuarios
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.initiateUsuarios = async (req, res) => {
   try {
     const receptor = req.body._id;
@@ -28,6 +44,12 @@ exports.initiateUsuarios = async (req, res) => {
   }
 };
 
+/**
+ * Función para emitir un mensaje a los integrantes de la sala, así como de guardarlo en la base de datos
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.postMessage = async (req, res) => {
     try {
       const salaId = req.params.roomId;
@@ -81,6 +103,12 @@ try {
 }
 },
 */
+/**
+ * Función para recuperar la conversacion de una sala
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.getConversationByRoomId = async (req, res) => {
     try {
       const salaId = req.params.roomId;
@@ -108,6 +136,12 @@ exports.getConversationByRoomId = async (req, res) => {
     }
 };
 
+/**
+ * Función para marcar un mensaje como leido por el usuario
+ * @param {any} req
+ * @param {any} res
+ * @returns {any}
+ */
 exports.markConversationReadByRoomId = async (req, res) => {
     try {
       const { roomId } = req.params;
@@ -115,7 +149,7 @@ exports.markConversationReadByRoomId = async (req, res) => {
       if (!room) {
         return res.status(400).json({
           success: false,
-          message: 'No room exists for this id',
+          message: 'No existe una sala con este id',
         })
       }
 
