@@ -35,7 +35,7 @@ app.set("port", port);
 
 // middleware para Cross-Origin Resource Sharing (para solicitar recursos desde un dominio distinto al que sirve el primer recurso)
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: ["http://localhost:8081", "http://192.168.1.27:8081"]
 };
 
 // añadir logger
@@ -68,11 +68,13 @@ app.use('*', (req, res) => {
   })
 });
 
+// Expresion regular para permitir conexiones en la misma red
+
 // Crear servidor HTTP. 
 const server = http.createServer(app);
 global.io = new Server(server, {
   cors: {
-    origin: "http://localhost:8081",
+    origin: ["http://localhost:8081","http://192.168.1.27:8081","http://192.168.:8081"],
     methods: ["GET", "POST"]
   }
   });
