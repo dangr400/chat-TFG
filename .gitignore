@@ -8,3 +8,4 @@ MVEN/node_modules
 MVEN/package-lock.json
 VUE/node_modules
 VUE/package-lock.json
+node_modules/engine.io/CHANGELOG.md
