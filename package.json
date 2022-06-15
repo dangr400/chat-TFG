@@ -5,6 +5,9 @@
   "description": "Aplicación de mensajería instantánea, para el Trabajo de Fin de Grado en la ESEI",
   "main": "index.js",
   "keywords": [],
+  "scripts": {
+    "test": echo "OK",
+  },
   "author": "Daniel Gomez Rodriguez",
   "license": "ISC",
   "dependencies": {
