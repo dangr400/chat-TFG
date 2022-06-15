@@ -4,9 +4,6 @@
   "private": true,
   "description": "Aplicación de mensajería instantánea, para el Trabajo de Fin de Grado en la ESEI",
   "main": "index.js",
-  "scripts": {
-    "postinstall": "cd MVEN && npm install",
-  },
   "keywords": [],
   "author": "Daniel Gomez Rodriguez",
   "license": "ISC",
