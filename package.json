@@ -6,7 +6,7 @@
   "main": "index.js",
   "keywords": [],
   "scripts": {
-    "test": "echo \"OK\" && exit 0",
+    "test": "echo \"OK\" ",
   },
   "author": "Daniel Gomez Rodriguez",
   "license": "ISC",
